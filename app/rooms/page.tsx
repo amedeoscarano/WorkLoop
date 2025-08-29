@@ -7,6 +7,7 @@ import { RoomCard } from '../../ui'
 import { getFlag } from '../../spec/featureFlags'
 import { useRouter } from 'next/navigation'
 import { findNextActiveRoom } from '../../lib/rooms'
+import { FixedSizeList as List } from 'react-window'
 
 type Filter = 'all'|'public'|'private'
 
@@ -69,24 +70,30 @@ export default function RoomsPage() {
       )}
 
       {!loading && !error && filtered.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map(r => (
-            <RoomCard
-              key={r.id}
-              id={r.id}
-              name={r.name}
-              topic={r.topic}
-              membersOnline={r.membersOnline}
-              visibility={r.visibility}
-              onJoin={(id)=>{
-                if(r.visibility==='private' && !showPrivate){
-                  window.location.href = '/billing'
-                  return
-                }
-                window.location.href = `/room/${id}`
-              }}
-            />
-          ))}
+        <div style={{ height: 600 }}>
+          <List height={600} width={'100%'} itemCount={filtered.length} itemSize={112}>
+            {({ index, style }) => {
+              const r = filtered[index]
+              return (
+                <div style={style} key={r.id}>
+                  <RoomCard
+                    id={r.id}
+                    name={r.name}
+                    topic={r.topic}
+                    membersOnline={r.membersOnline}
+                    visibility={r.visibility}
+                    onJoin={(id)=>{
+                      if(r.visibility==='private' && !showPrivate){
+                        window.location.href = '/billing'
+                        return
+                      }
+                      window.location.href = `/room/${id}`
+                    }}
+                  />
+                </div>
+              )
+            }}
+          </List>
         </div>
       )}
     </section>
