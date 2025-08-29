@@ -1,5 +1,6 @@
-@import '../styles/tailwind.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Additional globals */
 html, body { height: 100%; }
-
