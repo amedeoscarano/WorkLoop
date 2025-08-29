@@ -3,9 +3,17 @@
 import * as React from 'react'
 
 export default function SettingsPage(){
-  const [defaultDuration, setDefaultDuration] = React.useState<'25'|'50'>( (localStorage.getItem('defaultDuration') as any) || '25')
-  const [dark, setDark] = React.useState<boolean>(typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
-  const [sounds, setSounds] = React.useState<boolean>(localStorage.getItem('sounds') === 'true')
+  const [defaultDuration, setDefaultDuration] = React.useState<'25'|'50'>(() => {
+    if (typeof window === 'undefined') return '25'
+    return ((localStorage.getItem('defaultDuration') as any) || '25') as '25' | '50'
+  })
+  const [dark, setDark] = React.useState<boolean>(
+    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : false
+  )
+  const [sounds, setSounds] = React.useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('sounds') === 'true'
+  })
 
   function save(){
     localStorage.setItem('defaultDuration', defaultDuration)
@@ -48,4 +56,3 @@ export default function SettingsPage(){
     </section>
   )
 }
-
