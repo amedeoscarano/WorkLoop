@@ -56,7 +56,7 @@ export default function RoomsPage() {
             router.push(`/room/${id}`)
           }}
         >
-          Join next active room
+          Entra nella prossima stanza attiva
         </button>
       </div>
 
