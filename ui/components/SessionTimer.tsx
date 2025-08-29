@@ -30,6 +30,9 @@ export function SessionTimer({
       <p className="mt-2 text-5xl font-bold tabular-nums text-slate-900 dark:text-slate-100" aria-label={`Tempo rimanente ${mins} minuti e ${secs} secondi`}>
         {timeStr}
       </p>
+      {status==='running' && remainingMs<=10000 && (
+        <span className="sr-only" aria-live="assertive">Mancano {Math.ceil(remainingMs/1000)} secondi</span>
+      )}
       <p className="mt-1 text-xs text-slate-500">Durata: {duration} min</p>
 
       <div className="mt-4 flex gap-2">
@@ -60,4 +63,3 @@ export function SessionTimer({
     </section>
   )
 }
-
