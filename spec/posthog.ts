@@ -1,23 +1,49 @@
-/* Minimal PostHog client-side wrapper */
-export type CaptureProps = Record<string, any>
+// spec/posthog.ts
+// Safe no-op shim: does not block build if PostHog is not used.
+// When real PostHog is integrated, replace these functions with SDK calls.
 
-let ready = false
+type Props = Record<string, unknown>;
 
-export function initPostHog() {
-  if (typeof window === 'undefined') return
-  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
-  if (!key) return
-  if ((window as any).posthog) { ready = true; return }
-  // Lightweight loader
-  ;(function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src="https://cdn.posthog.com/posthog.js",(r=t.getElementsByTagName("script")[0]).parentNode!.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once reset group set_group add_group remove_group register register_once unregister opt_out_capturing opt_in_capturing has_opted_out_capturing has_opted_in_capturing clear_opt_in_out_capturing onFeatureFlags override opt_out_capturing".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)})(document,(window as any).posthog||(window as any).posthog=[])
-  ;(window as any).posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY, { api_host: 'https://app.posthog.com' })
-  ready = true
+// Public keys (can be empty; in that case everything is no-op)
+const PH_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY || '';
+const PH_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://eu.posthog.com';
+
+// Type hints for optional global posthog object
+declare global {
+  interface Window {
+    posthog?: {
+      init?: (key: string, opts?: Record<string, unknown>) => void;
+      capture?: (event: string, props?: Props) => void;
+      identify?: (id: string, props?: Props) => void;
+      reset?: () => void;
+    };
+  }
 }
 
-export function capture(event: string, props?: CaptureProps) {
-  if (typeof window === 'undefined') return
-  const ph = (window as any).posthog
-  if (!ph) return
-  try { ph.capture(event, props || {}) } catch {}
+export function initPosthog(): void {
+  if (!PH_KEY) return;
+  if (typeof window !== 'undefined' && window.posthog?.init) {
+    window.posthog.init(PH_KEY, { api_host: PH_HOST, capture_pageview: false });
+  }
 }
 
+export function capture(event: string, props?: Props): void {
+  if (!PH_KEY) return;
+  if (typeof window !== 'undefined' && window.posthog?.capture) {
+    window.posthog.capture(event, props);
+  }
+}
+
+export function identify(id: string, props?: Props): void {
+  if (!PH_KEY) return;
+  if (typeof window !== 'undefined' && window.posthog?.identify) {
+    window.posthog.identify(id, props);
+  }
+}
+
+export function shutdown(): void {
+  if (!PH_KEY) return;
+  if (typeof window !== 'undefined' && window.posthog?.reset) {
+    window.posthog.reset();
+  }
+}
