@@ -4,6 +4,8 @@ import * as React from 'react'
 import { useParams } from 'next/navigation'
 import { getRoom, startSession, endSession, sendMessage } from '../../../spec/mockApi'
 import { SessionTimer, ChatPanel } from '../../../ui'
+import { PresenceBar } from '../../../ui/PresenceBar'
+import { ReactionBar } from '../../../ui/ReactionBar'
 import type { SessionStatus } from '../../../spec/types'
 import { requiresSubscription, isUserSubscribed } from '../../../lib/subscription'
 import { PaywallGate } from '../../../ui/PaywallGate'
@@ -76,6 +78,13 @@ export default function RoomPage() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <h2 className="text-xl font-semibold">{roomName || 'Stanza'}</h2>
+        {/* Presence and reactions at top */}
+        {roomId && (
+          <div className="mt-2">
+            <PresenceBar roomId={roomId} />
+            <ReactionBar roomId={roomId} />
+          </div>
+        )}
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
         <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">

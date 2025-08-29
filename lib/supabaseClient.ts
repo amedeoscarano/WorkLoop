@@ -1,7 +1,7 @@
-// Stub for Supabase client (replace with real setup)
-export function getSupabase(){
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON
-  return { url, anon }
-}
+import { createClient } from '@supabase/supabase-js'
 
+// Create a browser client; requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON!
+)
