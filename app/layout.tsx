@@ -1,0 +1,47 @@
+import './globals.css'
+import type { Metadata } from 'next'
+import { Providers } from './providers'
+
+export const metadata: Metadata = {
+  title: 'Workloop',
+  description: 'Coworking digitale con sessioni 25/50 e obiettivi chiari.'
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="it">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-[Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji']">
+        <header className="border-b border-slate-200 dark:border-slate-800">
+          <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+            <a className="font-semibold" href="/">Workloop</a>
+            <div className="flex items-center gap-3 text-sm">
+              <a className="hover:underline" href="/rooms">Stanze</a>
+              <a className="hover:underline" href="/settings">Impostazioni</a>
+              <a className="hover:underline" href="/billing">Abbonamento</a>
+              <a className="hover:underline" href="/login">Login</a>
+            </div>
+          </nav>
+        </header>
+        <Providers>
+          <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+          <footer className="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-500">
+            <div className="flex items-center justify-between">
+              <p>© {new Date().getFullYear()} Workloop</p>
+              <div className="space-x-4">
+                <a className="hover:underline" href="/legal/privacy">Privacy</a>
+                <a className="hover:underline" href="/legal/terms">Termini</a>
+              </div>
+            </div>
+          </footer>
+        </Providers>
+      </body>
+    </html>
+  )
+}
+

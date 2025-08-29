@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base focus ring as tokens */
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+  *:focus-visible {
+    outline: none;
+  }
+}
+
