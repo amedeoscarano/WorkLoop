@@ -5,9 +5,10 @@ export type ChatPanelProps = {
   messages: {id:string; user:{id:string;name:string}; text:string; ts:string}[]
   onSend: (text:string)=>Promise<void>
   disabled?: boolean
+  title?: string
 }
 
-export function ChatPanel({ roomId, messages, onSend, disabled }: ChatPanelProps) {
+export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPanelProps) {
   const [text, setText] = React.useState('')
 
   async function handleSend(e: React.FormEvent) {
@@ -20,7 +21,7 @@ export function ChatPanel({ roomId, messages, onSend, disabled }: ChatPanelProps
 
   return (
     <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 h-full flex flex-col">
-      <h4 className="text-sm text-slate-500">Chat stanza</h4>
+      <h4 className="text-sm text-slate-500">{title ?? 'Chat stanza'}</h4>
       <ul className="mt-3 flex-1 overflow-auto space-y-2" aria-live="polite">
         {messages.map(m => (
           <li key={m.id} className="text-sm">
@@ -55,4 +56,3 @@ export function ChatPanel({ roomId, messages, onSend, disabled }: ChatPanelProps
     </section>
   )
 }
-

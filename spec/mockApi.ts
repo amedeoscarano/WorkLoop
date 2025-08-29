@@ -44,6 +44,21 @@ export async function sendMessage(roomId:string, text:string): Promise<ChatMessa
   }
 }
 
+export async function createRoom(input: { name: string; topic?: string; visibility: 'public'|'private'; hasVideo?: boolean }): Promise<Room> {
+  await lag()
+  const r: Room = {
+    id: 'room_'+rand(),
+    name: input.name,
+    topic: input.topic,
+    visibility: input.visibility,
+    createdAt: new Date().toISOString(),
+    membersOnline: 0,
+    hasVideo: input.hasVideo
+  }
+  MOCK_ROOMS.push(r)
+  return r
+}
+
 function lag(){ return new Promise(r=>setTimeout(r, 200)) }
 function rand(){ return Math.random().toString(36).slice(2,8) }
 
@@ -51,4 +66,3 @@ const MOCK_ROOMS: Room[] = [
   { id:'room_a', name:'Deep Work 25', topic:'Pomodoro 25', visibility:'public', createdAt:new Date().toISOString(), membersOnline:3, hasVideo:false },
   { id:'room_b', name:'Strategia 🧠', topic:'50 min', visibility:'private', createdAt:new Date().toISOString(), membersOnline:8, hasVideo:false }
 ]
-
