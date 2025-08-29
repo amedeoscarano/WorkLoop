@@ -5,10 +5,13 @@ import { listRooms } from '../../spec/mockApi'
 import { Room } from '../../spec/types'
 import { RoomCard } from '../../ui'
 import { getFlag } from '../../spec/featureFlags'
+import { useRouter } from 'next/navigation'
+import { findNextActiveRoom } from '../../lib/rooms'
 
 type Filter = 'all'|'public'|'private'
 
 export default function RoomsPage() {
+  const router = useRouter()
   const [rooms, setRooms] = React.useState<Room[]>([])
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
@@ -37,7 +40,16 @@ export default function RoomsPage() {
             <button key={f} onClick={()=>setFilter(f)} className={`px-3 py-1.5 text-sm ${filter===f? 'bg-slate-100 dark:bg-slate-800' : ''}`}>{f}</button>
           ))}
         </div>
-        <button className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500">Join next active room</button>
+        <button
+          className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+          onClick={async ()=>{
+            const id = await findNextActiveRoom()
+            if (!id) return alert('Nessuna stanza attiva ora')
+            router.push(`/room/${id}`)
+          }}
+        >
+          Join next active room
+        </button>
       </div>
 
       {loading && (
@@ -80,4 +92,3 @@ export default function RoomsPage() {
     </section>
   )
 }
-
