@@ -1,8 +1,11 @@
 'use client'
 
 import { checkout } from '../../lib/stripeStub'
+import { useEffect } from 'react'
+import { capture } from '../../spec/posthog'
 
 export default function BillingPage(){
+  useEffect(()=>{ capture('billing_viewed') }, [])
   return (
     <section className="max-w-2xl">
       <h2 className="text-xl font-semibold">Piano Pro</h2>
@@ -17,4 +20,3 @@ export default function BillingPage(){
     </section>
   )
 }
-

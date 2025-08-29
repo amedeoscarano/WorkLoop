@@ -11,6 +11,7 @@ import { requiresSubscription, isUserSubscribed } from '../../../lib/subscriptio
 import { PaywallGate } from '../../../ui/PaywallGate'
 import { checkout } from '../../../lib/stripeStub'
 import { SessionSummaryModal } from '../../../ui/SessionSummaryModal'
+import { capture } from '../../../spec/posthog'
 
 export default function RoomPage() {
   const params = useParams<{ id: string }>()
@@ -33,6 +34,11 @@ export default function RoomPage() {
     return () => { on = false }
   }, [roomId])
 
+  // Track room view
+  React.useEffect(() => {
+    if (roomId) capture('room_viewed', { room_id: roomId })
+  }, [roomId])
+
   React.useEffect(() => {
     if (status !== 'running') return
     const tick = setInterval(() => {
@@ -51,12 +57,14 @@ export default function RoomPage() {
       await startSession({ roomId, goal, duration })
       setStatus('running')
       resetTimer()
+      capture('session_started', { room_id: roomId, duration })
     }catch(e:any){ alert(e?.message || 'Errore.') }
   }
 
   async function handleAbort(){
     setStatus('aborted')
     await endSession('current', false)
+    capture('session_aborted', { room_id: roomId })
   }
 
   async function handleComplete(){
@@ -65,6 +73,7 @@ export default function RoomPage() {
     await endSession('current', true)
     // Open session summary modal instead of a disruptive alert
     setSummaryOpen(true)
+    capture('session_completed', { room_id: roomId, duration, goal_completed: true })
   }
 
   async function handleSend(text:string){
@@ -73,7 +82,13 @@ export default function RoomPage() {
   }
 
   // Paywall: gate private/video rooms for unsubscribed users
-  if (roomObj && requiresSubscription(roomObj) && !isUserSubscribed()) {
+  const gated = !!(roomObj && requiresSubscription(roomObj) && !isUserSubscribed())
+  React.useEffect(() => {
+    if (gated && roomObj) {
+      capture('paywall_viewed', { reason: roomObj.visibility === 'private' ? 'private-room' : 'video-room' })
+    }
+  }, [gated, roomObj])
+  if (gated) {
     return <PaywallGate onUpgrade={() => { checkout('pro-monthly','paywall') }} />
   }
 

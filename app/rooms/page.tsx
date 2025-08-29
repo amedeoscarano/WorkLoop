@@ -8,6 +8,7 @@ import { getFlag } from '../../spec/featureFlags'
 import { useRouter } from 'next/navigation'
 import { findNextActiveRoom } from '../../lib/rooms'
 import { FixedSizeList as List } from 'react-window'
+import { capture } from '../../spec/posthog'
 
 type Filter = 'all'|'public'|'private'
 
@@ -24,6 +25,12 @@ export default function RoomsPage() {
     listRooms().then(r => { if(on){ setRooms(r); setError(null) } }).catch(e=>{ if(on) setError('Impossibile caricare le stanze.') }).finally(()=>{ if(on) setLoading(false) })
     return () => { on = false }
   }, [])
+
+  React.useEffect(() => {
+    if (!loading && !error) {
+      capture('room_list_viewed', { count: rooms.length })
+    }
+  }, [loading, error, rooms.length])
 
   const showPrivate = getFlag('privateRooms')
   const filtered = rooms.filter(r => {
@@ -83,6 +90,7 @@ export default function RoomsPage() {
                     membersOnline={r.membersOnline}
                     visibility={r.visibility}
                     onJoin={(id)=>{
+                      capture('room_joined', { room_id: id, visibility: r.visibility })
                       if(r.visibility==='private' && !showPrivate){
                         window.location.href = '/billing'
                         return
