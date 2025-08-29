@@ -1,6 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Providers } from './providers'
+import { Providers, PwaProvider } from './providers'
 
 export const metadata: Metadata = {
   title: 'Workloop',
@@ -17,6 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-[Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji']">
+        {/* PWA: Register service worker */}
+        <PwaProvider />
         <header className="border-b border-slate-200 dark:border-slate-800">
           <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
             <a className="font-semibold" href="/">Workloop</a>
@@ -44,4 +46,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-
