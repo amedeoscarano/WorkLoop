@@ -10,6 +10,7 @@ import type { SessionStatus } from '../../../spec/types'
 import { requiresSubscription, isUserSubscribed } from '../../../lib/subscription'
 import { PaywallGate } from '../../../ui/PaywallGate'
 import { checkout } from '../../../lib/stripeStub'
+import { SessionSummaryModal } from '../../../ui/SessionSummaryModal'
 
 export default function RoomPage() {
   const params = useParams<{ id: string }>()
@@ -22,6 +23,7 @@ export default function RoomPage() {
   const [remainingMs, setRemainingMs] = React.useState(25*60_000)
   const [messages, setMessages] = React.useState<any[]>([])
   const [error, setError] = React.useState<string|null>(null)
+  const [summaryOpen, setSummaryOpen] = React.useState(false)
 
   React.useEffect(() => {
     let on = true
@@ -61,7 +63,8 @@ export default function RoomPage() {
     if(status !== 'running') return
     setStatus('completed')
     await endSession('current', true)
-    alert('Sessione completata! Goal raggiunto?')
+    // Open session summary modal instead of a disruptive alert
+    setSummaryOpen(true)
   }
 
   async function handleSend(text:string){
@@ -116,6 +119,7 @@ export default function RoomPage() {
       <div className="flex flex-col h-[70vh]">
         <ChatPanel roomId={roomId} messages={messages} onSend={handleSend} />
       </div>
+      <SessionSummaryModal open={summaryOpen} onClose={()=>setSummaryOpen(false)} goal={goal} duration={duration} />
     </div>
   )
 }
