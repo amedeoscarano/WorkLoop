@@ -1,8 +1,10 @@
 'use client'
 
 import * as React from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function OnboardingPage(){
+  const router = useRouter()
   const [step, setStep] = React.useState(1)
   const [nickname, setNickname] = React.useState('')
   const [tz, setTz] = React.useState(Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC')
@@ -10,7 +12,7 @@ export default function OnboardingPage(){
 
   function next(){ setStep(s=>Math.min(3, s+1)) }
   function prev(){ setStep(s=>Math.max(1, s-1)) }
-  function finish(){ window.location.href = '/rooms' }
+  function finish(){ router.push('/rooms') }
 
   return (
     <section className="max-w-xl mx-auto">
@@ -52,4 +54,3 @@ export default function OnboardingPage(){
     </section>
   )
 }
-
