@@ -5,11 +5,15 @@ import { useParams } from 'next/navigation'
 import { getRoom, startSession, endSession, sendMessage } from '../../../spec/mockApi'
 import { SessionTimer, ChatPanel } from '../../../ui'
 import type { SessionStatus } from '../../../spec/types'
+import { requiresSubscription, isUserSubscribed } from '../../../lib/subscription'
+import { PaywallGate } from '../../../ui/PaywallGate'
+import { checkout } from '../../../lib/stripeStub'
 
 export default function RoomPage() {
   const params = useParams<{ id: string }>()
   const roomId = params?.id as string
   const [roomName, setRoomName] = React.useState<string>('')
+  const [roomObj, setRoomObj] = React.useState<any | null>(null)
   const [goal, setGoal] = React.useState('')
   const [duration, setDuration] = React.useState<25|50>(25)
   const [status, setStatus] = React.useState<SessionStatus>('idle')
@@ -19,7 +23,9 @@ export default function RoomPage() {
 
   React.useEffect(() => {
     let on = true
-    getRoom(roomId).then(r => { if(on){ setRoomName(r.name); setError(null) } }).catch(e=>{ if(on) setError('La stanza non esiste o è privata.') })
+    getRoom(roomId)
+      .then(r => { if(on){ setRoomName(r.name); setRoomObj(r as any); setError(null) } })
+      .catch(e=>{ if(on) setError('La stanza non esiste o è privata.') })
     return () => { on = false }
   }, [roomId])
 
@@ -61,6 +67,11 @@ export default function RoomPage() {
     setMessages((prev)=>[...prev, m])
   }
 
+  // Paywall: gate private/video rooms for unsubscribed users
+  if (roomObj && requiresSubscription(roomObj) && !isUserSubscribed()) {
+    return <PaywallGate onUpgrade={() => { checkout('pro-monthly','paywall') }} />
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
@@ -99,4 +110,3 @@ export default function RoomPage() {
     </div>
   )
 }
-
