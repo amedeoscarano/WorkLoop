@@ -1,4 +1,6 @@
+/* eslint-disable @next/next/no-page-custom-font */
 import './globals.css'
+import React from 'react'
 import type { Metadata } from 'next'
 import { Providers, PwaProvider } from './providers'
 import Link from 'next/link'

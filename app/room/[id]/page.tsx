@@ -44,7 +44,7 @@ export default function RoomPage() {
           setError(null)
         }
       })
-      .catch((e) => {
+      .catch((_e) => {
         if (on) setError('La stanza non esiste o è privata.')
       })
     return () => {

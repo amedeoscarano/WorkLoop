@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 import { DashboardShell } from '../../ui/DashboardShell'
-import { openOAuthPopup } from '../../lib/ui'
+// import { openOAuthPopup } from '../../lib/ui'
 import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function SettingsPage() {
@@ -142,6 +142,7 @@ function Row({
   label: string
   desc: string
   checked: boolean
+  // eslint-disable-next-line no-unused-vars
   onChange: (v: boolean) => void
 }) {
   return (

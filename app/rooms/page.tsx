@@ -1,19 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import { listRooms, createRoom } from '../../spec/mockApi'
+import { listRooms } from '../../spec/mockApi'
 import { Room } from '../../spec/types'
-import { RoomCard } from '../../ui'
 import { getFlag } from '../../spec/featureFlags'
 import { useRouter } from 'next/navigation'
 import { findNextActiveRoom } from '../../lib/rooms'
-import { FixedSizeList as List } from 'react-window'
 import { capture } from '../../spec/posthog'
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { listScheduleSlots, type ScheduleSlot } from '../../spec/schedule'
-import { listOnlinePeople, type Person } from '../../spec/people'
 import { DashboardShell } from '../../ui/DashboardShell'
 import { AuthGuard } from '../../ui/AuthGuard'
 
@@ -28,7 +25,7 @@ export default function RoomsPage() {
   const [viewDays, setViewDays] = React.useState<1 | 5 | 7>(7)
   const [calendarDate, setCalendarDate] = React.useState<Date>(new Date())
   const [slots, setSlots] = React.useState<ScheduleSlot[]>([])
-  const [people, setPeople] = React.useState<Person[]>([])
+  // People list non usata qui; inbox/DM gestiscono la presenza
   // UI now mirrors calendar-centric layout; chat moved out for parity
 
   React.useEffect(() => {
@@ -41,7 +38,7 @@ export default function RoomsPage() {
           setError(null)
         }
       })
-      .catch((e) => {
+      .catch((_e) => {
         if (on) setError('Impossibile caricare le stanze.')
       })
       .finally(() => {
@@ -63,21 +60,13 @@ export default function RoomsPage() {
     listScheduleSlots().then((s) => {
       if (on) setSlots(s)
     })
-    listOnlinePeople().then((p) => {
-      if (on) setPeople(p)
-    })
     return () => {
       on = false
     }
   }, [])
 
-  const showPrivate = getFlag('privateRooms')
-  const filtered = rooms.filter((r) => {
-    if (!showPrivate && r.visibility === 'private') return false
-    if (filter === 'public') return r.visibility === 'public'
-    if (filter === 'private') return r.visibility === 'private'
-    return true
-  })
+  // Filtri pronti per uso futuro con lista stanze
+  const _showPrivate = getFlag('privateRooms')
 
   const [unread, setUnread] = React.useState(0)
   React.useEffect(() => {
@@ -227,67 +216,4 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-// Stub form for creating rooms with durations and reasons
-function CreateRoomForm({
-  onCreate,
-}: {
-  onCreate: (input: {
-    duration: 15 | 25 | 50
-    reason: 'pausa' | 'sessione lavorativa congiunta'
-  }) => void
-}) {
-  const [duration, setDuration] = React.useState<15 | 25 | 50>(25)
-  const [reason, setReason] = React.useState<'pausa' | 'sessione lavorativa congiunta'>(
-    'sessione lavorativa congiunta'
-  )
-  return (
-    <form
-      className="mt-3 space-y-3"
-      onSubmit={(e) => {
-        e.preventDefault()
-        onCreate({ duration, reason })
-      }}
-    >
-      <div>
-        <label className="block text-sm">Durata</label>
-        <select
-          value={duration}
-          onChange={(e) => setDuration(Number(e.target.value) as 15 | 25 | 50)}
-          className="mt-1 w-full rounded border px-3 py-2"
-        >
-          <option value={15}>15 minuti</option>
-          <option value={25}>25 minuti</option>
-          <option value={50}>50 minuti</option>
-        </select>
-      </div>
-      <div>
-        <label className="block text-sm">Motivo</label>
-        <div className="mt-1 space-y-1">
-          <label className="inline-flex items-center gap-2 text-sm">
-            <input
-              type="radio"
-              name="reason"
-              value="sessione"
-              checked={reason === 'sessione lavorativa congiunta'}
-              onChange={() => setReason('sessione lavorativa congiunta')}
-            />{' '}
-            Sessione lavorativa congiunta
-          </label>
-          <label className="inline-flex items-center gap-2 text-sm">
-            <input
-              type="radio"
-              name="reason"
-              value="pausa"
-              checked={reason === 'pausa'}
-              onChange={() => setReason('pausa')}
-            />{' '}
-            Pausa
-          </label>
-        </div>
-      </div>
-      <button type="submit" className="px-3 py-2 rounded bg-blue-600 text-white">
-        Crea
-      </button>
-    </form>
-  )
-}
+// (Form creazione stanza rimosso: non usato nella nuova UI)
