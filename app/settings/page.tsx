@@ -1,12 +1,19 @@
 'use client'
 import * as React from 'react'
 import { DashboardShell } from '../../ui/DashboardShell'
+import { openOAuthPopup } from '../../lib/ui'
 
 export default function SettingsPage(){
   const [gc, setGc] = React.useState(false)
   const [invites, setInvites] = React.useState(true)
   const [reports, setReports] = React.useState(true)
   const [desktop, setDesktop] = React.useState(true)
+
+  React.useEffect(()=>{
+    if (typeof document !== 'undefined') {
+      setGc(document.cookie.includes('google_connected=1'))
+    }
+  }, [])
 
   return (
     <DashboardShell>
@@ -20,7 +27,15 @@ export default function SettingsPage(){
           </div>
         </div>
         <div className="mt-4 space-y-4 text-sm">
-          <Row label="Google Calendar Integration" desc="Get sessions added to your calendar." checked={gc} onChange={setGc} />
+          <Row label="Google Calendar Integration" desc="Get sessions added to your calendar." checked={gc} onChange={async (v)=>{
+            if (v) {
+              await openOAuthPopup('/api/oauth/google/start?popup=1')
+              setGc(true)
+            } else {
+              document.cookie = 'google_connected=; Max-Age=0; path=/'
+              setGc(false)
+            }
+          }} />
           <Row label="Email Calendar Invites" desc="Get calendar events for sessions via email." checked={invites} onChange={setInvites} />
           <Row label="Performance Reports" desc="Get weekly and monthly reports of your accomplishments." checked={reports} onChange={setReports} />
           <Row label="Desktop Notifications" desc="Get notified when a session is about to start." checked={desktop} onChange={setDesktop} />

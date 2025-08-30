@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const urlIn = new URL(request.url)
+  const popup = urlIn.searchParams.get('popup') === '1'
   const h = headers()
   const host = h.get('x-forwarded-host') || h.get('host')
   const proto = h.get('x-forwarded-proto') || 'https'
@@ -16,9 +18,8 @@ export async function GET() {
     client_id: clientId,
     redirect_uri: redirectUri,
     scope: 'r_liteprofile r_emailaddress',
-    state: 'wl_demo'
+    state: popup ? 'popup' : 'normal'
   })
   const url = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`
   return NextResponse.redirect(url)
 }
-

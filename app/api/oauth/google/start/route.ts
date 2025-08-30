@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-export async function GET() {
+export async function GET(request: Request) {
+  const urlIn = new URL(request.url)
+  const popup = urlIn.searchParams.get('popup') === '1'
   const h = headers()
   const host = h.get('x-forwarded-host') || h.get('host')
   const proto = h.get('x-forwarded-proto') || 'https'
@@ -19,9 +21,8 @@ export async function GET() {
     access_type: 'offline',
     include_granted_scopes: 'true',
     prompt: 'consent',
-    state: 'wl_demo'
+    state: popup ? 'popup' : 'normal'
   })
   const url = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
   return NextResponse.redirect(url)
 }
-
