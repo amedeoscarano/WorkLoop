@@ -2,6 +2,12 @@
 import { DashboardShell } from '../../ui/DashboardShell'
 
 export default function ProfilePage(){
+  function signOut(){
+    try { localStorage.removeItem('user') } catch {}
+    document.cookie = 'linkedin_connected=; Max-Age=0; path=/'
+    document.cookie = 'google_connected=; Max-Age=0; path=/'
+    window.location.href = '/login'
+  }
   return (
     <DashboardShell>
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
@@ -13,7 +19,7 @@ export default function ProfilePage(){
               <p className="text-xs text-slate-500">Member since: Aug 29th, 2025</p>
             </div>
           </div>
-          <button className="px-3 py-1.5 rounded border">Sign out</button>
+          <button className="px-3 py-1.5 rounded border" onClick={signOut}>Sign out</button>
         </div>
 
         <div className="mt-4 grid gap-3">
@@ -60,4 +66,3 @@ function Stat({ label, value }: { label:string; value:string }){
     </div>
   )
 }
-

@@ -36,9 +36,9 @@ export default function SettingsPage(){
               setGc(false)
             }
           }} />
-          <Row label="Email Calendar Invites" desc="Get calendar events for sessions via email." checked={invites} onChange={setInvites} />
-          <Row label="Performance Reports" desc="Get weekly and monthly reports of your accomplishments." checked={reports} onChange={setReports} />
-          <Row label="Desktop Notifications" desc="Get notified when a session is about to start." checked={desktop} onChange={setDesktop} />
+          <Row label="Email Calendar Invites" desc="Get calendar events for sessions via email." checked={invites} onChange={(v)=>{ setInvites(v); try{ localStorage.setItem('set_invites', String(v)) }catch{}}} />
+          <Row label="Performance Reports" desc="Get weekly and monthly reports of your accomplishments." checked={reports} onChange={(v)=>{ setReports(v); try{ localStorage.setItem('set_reports', String(v)) }catch{}}} />
+          <Row label="Desktop Notifications" desc="Get notified when a session is about to start." checked={desktop} onChange={(v)=>{ setDesktop(v); try{ localStorage.setItem('set_desktop', String(v)) }catch{}}} />
           <p className="text-xs text-red-600">Please grant permissions in your browser settings to enable notifications.</p>
         </div>
       </div>

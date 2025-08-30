@@ -16,7 +16,7 @@ export function TodayPanel(){
         <button className="ml-auto w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700">⋯</button>
       </div>
 
-      <button className="mt-3 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 text-sm font-medium">Upgrade to Plus</button>
+      <button className="mt-3 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 text-sm font-medium" onClick={()=>router.push('/billing')}>Upgrade to Plus</button>
 
       <div className="mt-4 space-y-2">
         <PanelButton icon="📅" label="My Schedule" onClick={()=>router.push('/schedule')} />

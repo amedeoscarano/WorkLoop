@@ -1,7 +1,9 @@
 'use client'
 import { DashboardShell } from '../../ui/DashboardShell'
+import { useRouter } from 'next/navigation'
 
 export default function HelpPage(){
+  const router = useRouter()
   return (
     <DashboardShell>
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
@@ -16,7 +18,7 @@ export default function HelpPage(){
         </div>
         <Card title="How to Use Workloop" className="mt-3">
           <p className="text-sm text-slate-600">Watch this quick demo to learn the basics.</p>
-          <button className="mt-2 px-3 py-1.5 rounded bg-indigo-600 text-white text-sm">Watch Demo</button>
+          <button className="mt-2 px-3 py-1.5 rounded bg-indigo-600 text-white text-sm" onClick={()=>router.push('/help/demo')}>Watch Demo</button>
         </Card>
         <div className="mt-3 flex flex-wrap gap-2">
           {['Getting Started','Help Center','Troubleshooting','Report a Bug','Contact Us'].map(x=> (
@@ -36,4 +38,3 @@ function Card({ title, children, className='' }: any){
     </div>
   )
 }
-

@@ -11,7 +11,7 @@ export function PresenceBar({ roomId }: { roomId: string }) {
       const list = Object.values(state).flat() as any[]
       setUsers(list as any)
     })
-    ch.subscribe((status) => { if (status === 'SUBSCRIBED') ch.track({ id:'user_demo', name:'Demo' }) })
+    ch.subscribe((status: any) => { if (status === 'SUBSCRIBED') ch.track({ id:'user_demo', name:'Demo' }) })
     return () => { ch.untrack(); ch.unsubscribe() }
   }, [roomId])
   return (
