@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PwaProvider />
         <OfflineBanner />
         <header className="border-b border-slate-200 dark:border-slate-800">
-          <nav className="mx-auto max-w-5xl px-6 md:px-12 py-3 flex items-center justify-between">
+          <nav className="w-full px-6 md:px-12 py-3 flex items-center justify-between">
             <Link className="font-semibold" href="/">Workloop</Link>
             <div className="flex items-center gap-3 text-sm">
               <Link className="hover:underline" href="/rooms">Stanze</Link>
@@ -35,8 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </header>
         <Providers>
-          <main role="main" className="mx-auto max-w-5xl px-6 md:px-12 py-6">{children}</main>
-          <footer className="mx-auto max-w-5xl px-6 md:px-12 py-8 text-sm text-slate-500">
+          <main role="main" className="w-full px-6 md:px-12 py-6">{children}</main>
+          <footer className="w-full px-6 md:px-12 py-8 text-sm text-slate-500">
             <div className="flex items-center justify-between">
               <p>© {new Date().getFullYear()} Workloop</p>
               <div className="space-x-4">
