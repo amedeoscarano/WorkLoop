@@ -17,7 +17,7 @@ import { AuthGuard } from '../../../ui/AuthGuard'
 import { startPresence, setStatus as setPresenceStatus } from '../../../lib/presence'
 import { ScheduleModal } from '../../../ui/schedule/ScheduleModal'
 import { getFlag } from '../../../spec/featureFlags'
-import { VideoPanel } from '../../../ui/VideoPanel'
+import { VideoPanel } from '../../../ui/video/VideoPanel'
 
 export default function RoomPage() {
   const { data } = useSession()
@@ -153,7 +153,14 @@ export default function RoomPage() {
           />
         </div>
 
-        {getFlag('videoEnabled') && <VideoPanel />}
+        {getFlag('videoEnabled') ? (
+          <VideoPanel roomId={roomId} identity={data?.user?.email || 'anon'} />
+        ) : (
+          <section className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+            <p className="text-sm text-slate-600">Video in arrivo</p>
+            <button className="mt-2 px-3 py-1.5 rounded border" onClick={()=>window.open('https://meet.google.com/new','_blank')}>Apri Google Meet (backup)</button>
+          </section>
+        )}
 
         <div className="mt-2 text-xs text-slate-500">Scrivi un goal per avviare.</div>
       </div>

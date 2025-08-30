@@ -52,6 +52,13 @@ export default function SettingsPage(){
           <p className="text-xs text-red-600">Please grant permissions in your browser settings to enable notifications.</p>
         </div>
       </div>
+      <div className="mt-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <h3 className="text-md font-semibold">Audio & Video</h3>
+        <div className="mt-3 grid md:grid-cols-3 gap-3 text-sm">
+          <label className="inline-flex items-center gap-2"><input type="checkbox" onChange={e=>{ try{ localStorage.setItem('wl_join_muted', String((e.target as HTMLInputElement).checked)) }catch{} }} />Join silenziato di default</label>
+          <button className="px-3 py-1.5 rounded border" onClick={()=>{ const ev = new CustomEvent('wl_open_device_preview'); window.dispatchEvent(ev) }}>Test dispositivi</button>
+        </div>
+      </div>
     </DashboardShell>
   )
 }
