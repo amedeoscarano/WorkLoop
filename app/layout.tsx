@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Providers, PwaProvider } from './providers'
+import { InstallPrompt } from './(pwa)/installPrompt'
 
 export const metadata: Metadata = {
   title: 'Workloop',
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
         </Providers>
+        <InstallPrompt />
       </body>
     </html>
   )

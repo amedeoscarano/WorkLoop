@@ -59,6 +59,16 @@ export default function RoomsPage() {
     return true
   })
 
+  const [unread, setUnread] = React.useState(0)
+  React.useEffect(()=>{
+    function update(){ try{ setUnread(Number(localStorage.getItem('wl_unread')||'0')) }catch{}}
+    update()
+    const onStorage = (e: StorageEvent) => { if (e.key === 'wl_unread') update() }
+    window.addEventListener('storage', onStorage)
+    const id = setInterval(update, 2000)
+    return ()=>{ window.removeEventListener('storage', onStorage); clearInterval(id) }
+  }, [])
+
   return (
     <AuthGuard>
     <section>
@@ -78,7 +88,7 @@ export default function RoomsPage() {
         >
           Entra nella prossima stanza attiva
         </button>
-        <a className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border" href="/inbox">Inbox</a>
+        <a className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border" href="/inbox">Inbox{unread>0 && <span className="ml-1 inline-block px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">{unread}</span>}</a>
       </div>
 
       <DashboardShell>

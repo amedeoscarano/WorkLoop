@@ -17,6 +17,7 @@ export default function InboxPage(){
   React.useEffect(()=>{
     if (data?.user?.email) startPresence({ id: data.user.email, name: data.user.name || data.user.email })
     setStatus('available', null)
+    try{ localStorage.setItem('wl_unread','0') }catch{}
   }, [data])
   return (
     <AuthGuard>

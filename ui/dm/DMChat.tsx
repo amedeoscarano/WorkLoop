@@ -1,6 +1,7 @@
 'use client'
 import * as React from 'react'
 import { supabase } from '../../lib/supabaseClient'
+import { capture } from '../../spec/posthog'
 
 export function DMChat({ id, me }: { id: string; me: { id:string; name:string }}){
   const [messages, setMessages] = React.useState<{id:string; user:{id:string;name:string}; text:string; ts:string}[]>([])
@@ -9,7 +10,15 @@ export function DMChat({ id, me }: { id: string; me: { id:string; name:string }}
   React.useEffect(()=>{
     const ch = supabase.channel(`dm:${id}`)
     ch.on('broadcast', { event: 'message' }, (payload: any) => {
-      setMessages(prev=>[...prev, payload.payload])
+      const m = payload.payload
+      setMessages(prev=>[...prev, m])
+      // Unread counter: if tab not focused or different DM, increment simple counter
+      try {
+        if (document.visibilityState === 'hidden') {
+          const n = Number(localStorage.getItem('wl_unread')||'0') + 1
+          localStorage.setItem('wl_unread', String(n))
+        }
+      } catch {}
     })
     ch.subscribe()
     return ()=>{ ch.unsubscribe() }
@@ -21,6 +30,7 @@ export function DMChat({ id, me }: { id: string; me: { id:string; name:string }}
     setMessages(prev=>[...prev, m])
     setText('')
     supabase.channel(`dm:${id}`).send({ type: 'broadcast', event: 'message', payload: m })
+    capture('message_sent', { type: 'dm', conversationId: id })
   }
 
   return (
@@ -42,4 +52,3 @@ export function DMChat({ id, me }: { id: string; me: { id:string; name:string }}
     </section>
   )
 }
-

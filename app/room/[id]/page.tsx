@@ -14,6 +14,9 @@ import { SessionSummaryModal } from '../../../ui/SessionSummaryModal'
 import { capture } from '../../../spec/posthog'
 import { useSession } from 'next-auth/react'
 import { startPresence, setStatus as setPresenceStatus } from '../../../lib/presence'
+import { ScheduleModal } from '../../../ui/schedule/ScheduleModal'
+import { getFlag } from '../../../spec/featureFlags'
+import { VideoPanel } from '../../../ui/VideoPanel'
 
 export default function RoomPage() {
   const { data } = useSession()
@@ -28,6 +31,7 @@ export default function RoomPage() {
   const [messages, setMessages] = React.useState<any[]>([])
   const [error, setError] = React.useState<string|null>(null)
   const [summaryOpen, setSummaryOpen] = React.useState(false)
+  const [scheduleOpen, setScheduleOpen] = React.useState(false)
 
   React.useEffect(() => {
     let on = true
@@ -108,6 +112,9 @@ export default function RoomPage() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <h2 className="text-xl font-semibold">{roomName || 'Stanza'}</h2>
+        <div className="mt-2 flex gap-2">
+          <button className="px-3 py-1.5 rounded border" onClick={()=>setScheduleOpen(true)}>Programma</button>
+        </div>
         {/* Presence and reactions at top */}
         {roomId && (
           <div className="mt-2">
@@ -143,6 +150,8 @@ export default function RoomPage() {
           />
         </div>
 
+        {getFlag('videoEnabled') && <VideoPanel />}
+
         <div className="mt-2 text-xs text-slate-500">Scrivi un goal per avviare.</div>
       </div>
 
@@ -150,6 +159,7 @@ export default function RoomPage() {
         <ChatPanel roomId={roomId} messages={messages} onSend={handleSend} />
       </div>
       <SessionSummaryModal open={summaryOpen} onClose={()=>setSummaryOpen(false)} goal={goal} duration={duration} />
+      <ScheduleModal open={scheduleOpen} onClose={()=>setScheduleOpen(false)} defaults={{ title: goal || `Sessione ${duration}m`, duration }} />
     </div>
   )
 }
