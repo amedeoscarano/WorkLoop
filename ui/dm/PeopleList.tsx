@@ -1,14 +1,14 @@
 'use client'
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
-import { getPresenceState } from '../../lib/presence'
+import { getPresenceState, onPresenceChange } from '../../lib/presence'
 
 export function PeopleList(){
   const [tick, setTick] = React.useState(0)
   const router = useRouter()
   React.useEffect(()=>{
-    const id = setInterval(()=>setTick(t=>t+1), 1000)
-    return ()=>clearInterval(id)
+    const off = onPresenceChange(()=>setTick(t=>t+1))
+    return off
   }, [])
   const items = React.useMemo(()=>getPresenceState().map((p:any)=>({ id:p.userId, name:p.name, status: p.status, context: p.context })), [tick])
   return (

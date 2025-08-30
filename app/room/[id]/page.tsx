@@ -13,6 +13,7 @@ import { checkout } from '../../../lib/stripeStub'
 import { SessionSummaryModal } from '../../../ui/SessionSummaryModal'
 import { capture } from '../../../spec/posthog'
 import { useSession } from 'next-auth/react'
+import { AuthGuard } from '../../../ui/AuthGuard'
 import { startPresence, setStatus as setPresenceStatus } from '../../../lib/presence'
 import { ScheduleModal } from '../../../ui/schedule/ScheduleModal'
 import { getFlag } from '../../../spec/featureFlags'
@@ -109,7 +110,8 @@ export default function RoomPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <AuthGuard>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="main">
       <div>
         <h2 className="text-xl font-semibold">{roomName || 'Stanza'}</h2>
         <div className="mt-2 flex gap-2">
@@ -161,5 +163,6 @@ export default function RoomPage() {
       <SessionSummaryModal open={summaryOpen} onClose={()=>setSummaryOpen(false)} goal={goal} duration={duration} />
       <ScheduleModal open={scheduleOpen} onClose={()=>setScheduleOpen(false)} defaults={{ title: goal || `Sessione ${duration}m`, duration }} />
     </div>
+    </AuthGuard>
   )
 }

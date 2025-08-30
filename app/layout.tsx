@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Providers, PwaProvider } from './providers'
+import Link from 'next/link'
 import { InstallPrompt } from './(pwa)/installPrompt'
 
 export const metadata: Metadata = {
@@ -22,12 +23,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PwaProvider />
         <header className="border-b border-slate-200 dark:border-slate-800">
           <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-            <a className="font-semibold" href="/">Workloop</a>
+            <Link className="font-semibold" href="/">Workloop</Link>
             <div className="flex items-center gap-3 text-sm">
-              <a className="hover:underline" href="/rooms">Stanze</a>
-              <a className="hover:underline" href="/settings">Impostazioni</a>
-              <a className="hover:underline" href="/billing">Abbonamento</a>
-              <a className="hover:underline" href="/login">Login</a>
+              <Link className="hover:underline" href="/rooms">Stanze</Link>
+              <Link className="hover:underline" href="/settings">Impostazioni</Link>
+              <Link className="hover:underline" href="/billing">Abbonamento</Link>
+              <Link className="hover:underline" href="/login">Login</Link>
             </div>
           </nav>
         </header>
@@ -37,8 +38,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="flex items-center justify-between">
               <p>© {new Date().getFullYear()} Workloop</p>
               <div className="space-x-4">
-                <a className="hover:underline" href="/legal/privacy">Privacy</a>
-                <a className="hover:underline" href="/legal/terms">Termini</a>
+                <Link className="hover:underline" href="/legal/privacy">Privacy</Link>
+                <Link className="hover:underline" href="/legal/terms">Termini</Link>
               </div>
             </div>
           </footer>
