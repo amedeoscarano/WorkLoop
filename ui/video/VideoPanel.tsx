@@ -76,22 +76,22 @@ export function VideoPanel({ roomId, identity }: { roomId: string; identity: str
     <section className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
       <NetworkNotice text={notice} />
       {state === 'preview' && <DevicePreview onJoin={(opts) => join(opts)} />}
-      {state === 'connecting' && <div className="text-sm">Connessione…</div>}
+      {state === 'connecting' && <div className="text-sm">Connecting…</div>}
       {state === 'error' && (
         <div className="text-sm">
-          Errore nel join.{' '}
+          Join failed.{' '}
           <button className="underline" onClick={() => setState('preview')}>
-            Riprova
+            Retry
           </button>{' '}
-          o{' '}
+          or{' '}
           <button className="underline" onClick={openMeet}>
-            Apri Google Meet (backup)
+            Open Google Meet (backup)
           </button>
         </div>
       )}
       {state === 'connected' && (
         <div>
-          <VideoGrid local={{ label: 'Tu', stream: localStream, muted }} remotes={remoteStreams} />
+          <VideoGrid local={{ label: 'You', stream: localStream, muted }} remotes={remoteStreams} />
           <MediaControls
             muted={muted}
             camOff={camOff}

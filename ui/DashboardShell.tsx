@@ -9,7 +9,7 @@ import { createRoom } from '../spec/mockApi'
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[3rem_16rem_minmax(0,1fr)_16rem] gap-4 items-start px-6 md:px-12">
+    <div className="grid grid-cols-1 lg:grid-cols-[3rem_14rem_minmax(0,2fr)_14rem] gap-6 items-start px-6 md:px-12">
       <div className="hidden lg:flex">
         <SidebarNav />
       </div>

@@ -28,28 +28,36 @@ export function PeopleList() {
             <div className="w-8 h-8 rounded-full bg-slate-300" />
             <div>
               <p className="text-sm font-medium">{p.name}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-700">
                 <span
                   className={`inline-block w-2 h-2 rounded-full mr-1 ${p.status === 'available' ? 'bg-green-500' : p.status === 'online' ? 'bg-sky-500' : 'bg-amber-500'}`}
                 />
                 {p.status === 'busy' && p.context
-                  ? `Occupato (in ${p.context.label})`
+                  ? `Busy (in ${p.context.label})`
                   : p.status === 'available'
-                    ? 'Disponibile'
+                    ? 'Available'
                     : p.status === 'online'
                       ? 'Online'
-                      : 'In pausa'}
+                      : 'On break'}
               </p>
             </div>
           </div>
           <button
-            className="px-2 py-1 rounded border text-xs"
+            className="px-4 py-2 rounded-lg text-base font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-600"
             onClick={() => router.push(`/dm/dm_${p.id}`)}
           >
-            Messaggia
+            Message
           </button>
         </li>
       ))}
+      {items.length === 0 && (
+        <li className="p-8">
+          <div className="flex flex-col items-center justify-center text-slate-500">
+            <div className="text-3xl mb-2">🗣️</div>
+            <p>Nothing here yet. Start a session to meet new people!</p>
+          </div>
+        </li>
+      )}
     </ul>
   )
 }

@@ -103,14 +103,14 @@ export default function RoomsPage() {
             ))}
           </div>
           <button
-            className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+            className="ml-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-base font-medium bg-blue-600 text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600"
             onClick={async () => {
               const id = await findNextActiveRoom()
               if (!id) return alert('Nessuna stanza attiva ora')
               router.push(`/room/${id}`)
             }}
           >
-            Entra nella prossima stanza attiva
+            Join next active room
           </button>
           <a
             className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border"

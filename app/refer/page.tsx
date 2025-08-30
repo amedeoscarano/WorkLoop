@@ -15,8 +15,15 @@ export default function ReferPage() {
           Share your referral link to give a free month and earn a free month when they upgrade.
         </p>
         <div className="mt-3 flex gap-2 max-w-xl">
-          <input value={link} readOnly className="flex-1 rounded-lg border px-3 py-2" />
-          <button onClick={copy} className="rounded-lg px-3 py-2 bg-indigo-600 text-white">
+          <input
+            value={link}
+            readOnly
+            className="flex-1 rounded-lg border border-slate-300 px-3 py-2"
+          />
+          <button
+            onClick={copy}
+            className="rounded-lg px-4 py-2 border border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
+          >
             Copy link
           </button>
         </div>

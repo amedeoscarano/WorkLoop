@@ -25,7 +25,7 @@ export function SessionSetupCard({ onStart }: { onStart: (d: Duration, t: Task) 
 
       <button
         onClick={() => onStart(duration, task)}
-        className="mt-3 w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white py-3 font-medium"
+        className="mt-3 w-full rounded-lg px-4 py-2 text-base font-medium bg-blue-600 text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
       >
         New session
       </button>
@@ -82,7 +82,7 @@ export function SessionSetupCard({ onStart }: { onStart: (d: Duration, t: Task) 
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-sm">Quiet Mode</p>
+              <p className="text-sm">Focus Mode</p>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -91,7 +91,7 @@ export function SessionSetupCard({ onStart }: { onStart: (d: Duration, t: Task) 
                   onChange={(e) => setQuiet(e.target.checked)}
                 />
                 <span
-                  className={`w-10 h-6 inline-flex items-center rounded-full p-1 transition ${quiet ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                  className={`w-10 h-6 inline-flex items-center rounded-full p-1 transition ${quiet ? 'bg-blue-600' : 'bg-slate-300'}`}
                 >
                   <span
                     className={`w-4 h-4 bg-white rounded-full transition ${quiet ? 'translate-x-4' : ''}`}

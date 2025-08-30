@@ -21,7 +21,7 @@ export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPan
 
   return (
     <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 h-full flex flex-col">
-      <h4 className="text-sm text-slate-500">{title ?? 'Chat stanza'}</h4>
+      <h4 className="text-sm text-slate-700">{title ?? 'Room chat'}</h4>
       <ul className="mt-3 flex-1 overflow-auto space-y-2" aria-live="polite">
         {messages.map((m) => (
           <li key={m.id} className="text-sm">
@@ -33,9 +33,7 @@ export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPan
           </li>
         ))}
         {messages.length === 0 && (
-          <li className="text-sm text-slate-500">
-            Nessun messaggio. Rompi il ghiaccio con un saluto 👋
-          </li>
+          <li className="text-sm text-slate-700">Nothing yet. Break the ice with a 👋</li>
         )}
       </ul>
 
@@ -51,10 +49,10 @@ export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPan
         />
         <button
           type="submit"
-          className="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50"
+          className="px-4 py-2 rounded-lg text-base font-medium bg-blue-600 text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 disabled:opacity-50"
           disabled={disabled || !text.trim()}
         >
-          Invia
+          Send
         </button>
       </form>
     </section>
