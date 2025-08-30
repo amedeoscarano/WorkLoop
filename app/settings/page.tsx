@@ -1,58 +1,49 @@
 'use client'
-
 import * as React from 'react'
+import { DashboardShell } from '../../ui/DashboardShell'
 
 export default function SettingsPage(){
-  const [defaultDuration, setDefaultDuration] = React.useState<'25'|'50'>(() => {
-    if (typeof window === 'undefined') return '25'
-    return ((localStorage.getItem('defaultDuration') as any) || '25') as '25' | '50'
-  })
-  const [dark, setDark] = React.useState<boolean>(
-    typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : false
-  )
-  const [sounds, setSounds] = React.useState<boolean>(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem('sounds') === 'true'
-  })
-
-  function save(){
-    localStorage.setItem('defaultDuration', defaultDuration)
-    localStorage.setItem('sounds', String(sounds))
-    if (dark) document.documentElement.classList.add('dark'); else document.documentElement.classList.remove('dark')
-    alert('Impostazioni salvate')
-  }
+  const [gc, setGc] = React.useState(false)
+  const [invites, setInvites] = React.useState(true)
+  const [reports, setReports] = React.useState(true)
+  const [desktop, setDesktop] = React.useState(true)
 
   return (
-    <section className="max-w-xl">
-      <h2 className="text-xl font-semibold">Impostazioni</h2>
-      <div className="mt-4 space-y-4">
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-          <label className="text-sm text-slate-600">Durata predefinita</label>
-          <div className="mt-2">
-            <select value={defaultDuration} onChange={e=>setDefaultDuration(e.target.value as '25'|'50')} className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <option value="25">25 minuti</option>
-              <option value="50">50 minuti</option>
-            </select>
+    <DashboardShell>
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
+        <h2 className="text-lg font-semibold">Settings</h2>
+        <div className="mt-3 border-b border-slate-200 dark:border-slate-800 text-sm">
+          <div className="inline-flex gap-4">
+            <button className="border-b-2 border-indigo-600 pb-2">Notifications</button>
+            <button className="text-slate-500">Preferences</button>
+            <button className="text-slate-500">Account</button>
           </div>
         </div>
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Tema scuro</p>
-            <p className="text-xs text-slate-500">Mantiene contrasto AA</p>
-          </div>
-          <input aria-label="Dark mode" type="checkbox" checked={dark} onChange={e=>setDark(e.target.checked)} />
-        </div>
-        <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Suoni timer</p>
-            <p className="text-xs text-slate-500">Avvisi a fine sessione</p>
-          </div>
-          <input aria-label="Suoni timer" type="checkbox" checked={sounds} onChange={e=>setSounds(e.target.checked)} />
-        </div>
-        <div>
-          <button onClick={save} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500">Salva</button>
+        <div className="mt-4 space-y-4 text-sm">
+          <Row label="Google Calendar Integration" desc="Get sessions added to your calendar." checked={gc} onChange={setGc} />
+          <Row label="Email Calendar Invites" desc="Get calendar events for sessions via email." checked={invites} onChange={setInvites} />
+          <Row label="Performance Reports" desc="Get weekly and monthly reports of your accomplishments." checked={reports} onChange={setReports} />
+          <Row label="Desktop Notifications" desc="Get notified when a session is about to start." checked={desktop} onChange={setDesktop} />
+          <p className="text-xs text-red-600">Please grant permissions in your browser settings to enable notifications.</p>
         </div>
       </div>
-    </section>
+    </DashboardShell>
+  )
+}
+
+function Row({ label, desc, checked, onChange }: { label:string; desc:string; checked:boolean; onChange:(v:boolean)=>void }){
+  return (
+    <div className="flex items-start justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-3">
+      <div>
+        <p className="font-medium">{label}</p>
+        <p className="text-slate-500">{desc}</p>
+      </div>
+      <label className="inline-flex items-center cursor-pointer">
+        <input type="checkbox" className="sr-only" checked={checked} onChange={e=>onChange(e.target.checked)} />
+        <span className={`w-11 h-6 inline-flex items-center rounded-full p-1 transition ${checked? 'bg-indigo-600' : 'bg-slate-300'}`}>
+          <span className={`w-4 h-4 bg-white rounded-full transition ${checked? 'translate-x-5' : ''}`} />
+        </span>
+      </label>
+    </div>
   )
 }

@@ -14,9 +14,7 @@ import { format, parse, startOfWeek, getDay } from 'date-fns'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { listScheduleSlots, type ScheduleSlot } from '../../spec/schedule'
 import { listOnlinePeople, type Person } from '../../spec/people'
-import { SidebarNav } from '../../ui/SidebarNav'
-import { SessionSetupCard } from '../../ui/SessionSetupCard'
-import { TodayPanel } from '../../ui/TodayPanel'
+import { DashboardShell } from '../../ui/DashboardShell'
 
 type Filter = 'all'|'public'|'private'
 
@@ -80,16 +78,7 @@ export default function RoomsPage() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[3rem_20rem_minmax(0,1fr)_22rem] gap-4 items-start">
-        {/* Thin icon bar */}
-        <SidebarNav />
-
-        {/* Left settings card */}
-        <SessionSetupCard onStart={async (d, t)=>{
-          const r = await createRoom({ name: `Sessione ${d}m`, topic: t, visibility: 'public' })
-          router.push(`/room/${r.id}`)
-        }} />
-
+      <DashboardShell>
         {/* Center calendar with custom header */}
         <section>
           <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2">
@@ -128,10 +117,7 @@ export default function RoomsPage() {
             />
           </div>
         </section>
-
-        {/* Right profile/cta panel */}
-        <TodayPanel />
-      </div>
+      </DashboardShell>
     </section>
   )
 }
