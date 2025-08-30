@@ -100,6 +100,9 @@ export default function RoomPage() {
         {roomId && (
           <div className="mt-2">
             <PresenceBar roomId={roomId} />
+            <div className="mt-2">
+              <a href="/inbox" className="text-xs underline">Inbox</a>
+            </div>
             <ReactionBar roomId={roomId} />
           </div>
         )}
