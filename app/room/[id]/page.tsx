@@ -149,6 +149,7 @@ export default function RoomPage() {
             onAbort={handleAbort}
             onComplete={handleComplete}
             ariaLive={remainingMs <= 10_000 ? 'assertive' : 'polite'}
+            canStart={!!goal.trim()}
           />
         </div>
 

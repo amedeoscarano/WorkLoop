@@ -14,8 +14,13 @@ export default function BillingPage(){
         <div>
           <p className="font-medium">Pro Mensile</p>
           <p className="text-sm text-slate-500">€9 / mese</p>
+          <ul className="mt-2 text-sm list-disc pl-5 space-y-1">
+            <li>Stanze private</li>
+            <li>Accesso video (fase 2)</li>
+            <li>Supporto prioritario</li>
+          </ul>
         </div>
-        <button onClick={()=>checkout('pro-monthly','paywall')} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500">Upgrade</button>
+        <button onClick={()=>checkout('pro-monthly','paywall')} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Upgrade</button>
       </div>
     </section>
   )

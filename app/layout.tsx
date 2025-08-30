@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Providers, PwaProvider } from './providers'
 import Link from 'next/link'
 import { InstallPrompt } from './(pwa)/installPrompt'
+import { OfflineBanner } from './OfflineBanner'
 
 export const metadata: Metadata = {
   title: 'Workloop',
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-[Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji']">
         {/* PWA: Register service worker */}
         <PwaProvider />
+        <OfflineBanner />
         <header className="border-b border-slate-200 dark:border-slate-800">
           <nav className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
             <Link className="font-semibold" href="/">Workloop</Link>
