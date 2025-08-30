@@ -12,8 +12,11 @@ import { PaywallGate } from '../../../ui/PaywallGate'
 import { checkout } from '../../../lib/stripeStub'
 import { SessionSummaryModal } from '../../../ui/SessionSummaryModal'
 import { capture } from '../../../spec/posthog'
+import { useSession } from 'next-auth/react'
+import { startPresence, setStatus as setPresenceStatus } from '../../../lib/presence'
 
 export default function RoomPage() {
+  const { data } = useSession()
   const params = useParams<{ id: string }>()
   const roomId = params?.id as string
   const [roomName, setRoomName] = React.useState<string>('')
@@ -33,6 +36,15 @@ export default function RoomPage() {
       .catch(e=>{ if(on) setError('La stanza non esiste o è privata.') })
     return () => { on = false }
   }, [roomId])
+
+  // Presence: mark busy when session running
+  React.useEffect(()=>{
+    if (data?.user?.email) startPresence({ id: data.user.email, name: data.user.name || data.user.email })
+  }, [data])
+  React.useEffect(()=>{
+    if (status === 'running') setPresenceStatus('busy', { type:'room', id: roomId, label: roomName || 'Room' })
+    else setPresenceStatus('available')
+  }, [status, roomId, roomName])
 
   // Track room view
   React.useEffect(() => {

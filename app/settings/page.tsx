@@ -2,18 +2,19 @@
 import * as React from 'react'
 import { DashboardShell } from '../../ui/DashboardShell'
 import { openOAuthPopup } from '../../lib/ui'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function SettingsPage(){
+  const { data: session } = useSession()
   const [gc, setGc] = React.useState(false)
   const [invites, setInvites] = React.useState(true)
   const [reports, setReports] = React.useState(true)
   const [desktop, setDesktop] = React.useState(true)
 
   React.useEffect(()=>{
-    if (typeof document !== 'undefined') {
-      setGc(document.cookie.includes('google_connected=1'))
-    }
-  }, [])
+    const s: any = session as any
+    if (s?.provider === 'google' || s?.access_token) setGc(true)
+  }, [session])
 
   return (
     <DashboardShell>
@@ -27,15 +28,24 @@ export default function SettingsPage(){
           </div>
         </div>
         <div className="mt-4 space-y-4 text-sm">
-          <Row label="Google Calendar Integration" desc="Get sessions added to your calendar." checked={gc} onChange={async (v)=>{
+          <Row label={`Google Calendar Integration ${gc && session?.user?.email ? `(as ${session.user.email})` : ''}`} desc="Get sessions added to your calendar." checked={gc} onChange={async (v)=>{
             if (v) {
-              await openOAuthPopup('/api/oauth/google/start?popup=1')
-              setGc(true)
+              await signIn('google', { callbackUrl: '/settings?google=connected' })
             } else {
-              document.cookie = 'google_connected=; Max-Age=0; path=/'
+              await signOut({ redirect: false })
               setGc(false)
             }
           }} />
+          {gc && (
+            <div>
+              <button className="px-3 py-1.5 rounded bg-blue-600 text-white text-sm" onClick={async()=>{
+                const now = Date.now();
+                const res = await fetch('/api/google/calendar/create', { method: 'POST', body: JSON.stringify({ summary: 'Workloop Test', start: new Date(now+5*60000).toISOString(), end: new Date(now+35*60000).toISOString() }) })
+                const data = await res.json()
+                alert(data.htmlLink ? `Creato: ${data.htmlLink}` : JSON.stringify(data))
+              }}>Create test event</button>
+            </div>
+          )}
           <Row label="Email Calendar Invites" desc="Get calendar events for sessions via email." checked={invites} onChange={(v)=>{ setInvites(v); try{ localStorage.setItem('set_invites', String(v)) }catch{}}} />
           <Row label="Performance Reports" desc="Get weekly and monthly reports of your accomplishments." checked={reports} onChange={(v)=>{ setReports(v); try{ localStorage.setItem('set_reports', String(v)) }catch{}}} />
           <Row label="Desktop Notifications" desc="Get notified when a session is about to start." checked={desktop} onChange={(v)=>{ setDesktop(v); try{ localStorage.setItem('set_desktop', String(v)) }catch{}}} />
