@@ -15,6 +15,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { listScheduleSlots, type ScheduleSlot } from '../../spec/schedule'
 import { listOnlinePeople, type Person } from '../../spec/people'
 import { DashboardShell } from '../../ui/DashboardShell'
+import { AuthGuard } from '../../ui/AuthGuard'
 
 type Filter = 'all'|'public'|'private'
 
@@ -59,6 +60,7 @@ export default function RoomsPage() {
   })
 
   return (
+    <AuthGuard>
     <section>
       <div className="mb-4 flex items-center gap-3">
         <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
@@ -76,6 +78,7 @@ export default function RoomsPage() {
         >
           Entra nella prossima stanza attiva
         </button>
+        <a className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border" href="/inbox">Inbox</a>
       </div>
 
       <DashboardShell>
@@ -119,6 +122,7 @@ export default function RoomsPage() {
         </section>
       </DashboardShell>
     </section>
+    </AuthGuard>
   )
 }
 

@@ -4,12 +4,22 @@ import { DashboardShell } from '../../ui/DashboardShell'
 import { ConversationList } from '../../ui/dm/ConversationList'
 import { PeopleList } from '../../ui/dm/PeopleList'
 
+import { AuthGuard } from '../../ui/AuthGuard'
+import { useSession } from 'next-auth/react'
+import { startPresence, setStatus } from '../../lib/presence'
+
 export default function InboxPage(){
+  const { data } = useSession()
   const conversations = React.useMemo(()=>[
     { id: 'dm_u1', name: 'Alex', last: 'A dopo!', ts: new Date().toISOString(), unread: 0 },
     { id: 'dm_u2', name: 'Bianca', last: 'Ok', ts: new Date().toISOString(), unread: 2 }
   ], [])
+  React.useEffect(()=>{
+    if (data?.user?.email) startPresence({ id: data.user.email, name: data.user.name || data.user.email })
+    setStatus('available', null)
+  }, [data])
   return (
+    <AuthGuard>
     <DashboardShell>
       <div className="grid md:grid-cols-2 gap-4">
         <div>
@@ -22,6 +32,6 @@ export default function InboxPage(){
         </div>
       </div>
     </DashboardShell>
+    </AuthGuard>
   )
 }
-
