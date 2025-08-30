@@ -17,6 +17,17 @@ export default function OnboardingPage(){
   return (
     <section className="max-w-xl mx-auto">
       <h2 className="text-xl font-semibold">Onboarding</h2>
+      {/* Account connections */}
+      <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-800 p-3">
+        <p className="text-sm font-medium">Account</p>
+        <div className="mt-2 space-y-2">
+          <button className="w-full px-3 py-2 rounded bg-indigo-600 text-white" onClick={()=>{ window.location.href='/api/oauth/linkedin/start' }}>Continua con LinkedIn</button>
+          <label className="flex items-center justify-between w-full px-3 py-2 rounded border">
+            <span className="text-sm">Connetti Google Calendar</span>
+            <input type="checkbox" onChange={e=>{ if((e.target as HTMLInputElement).checked) window.location.href='/api/oauth/google/start' }} />
+          </label>
+        </div>
+      </div>
       <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
         {step===1 && (
           <div>
