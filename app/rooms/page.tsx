@@ -25,7 +25,7 @@ export default function RoomsPage() {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [filter, setFilter] = React.useState<Filter>('all')
-  const [viewDays, setViewDays] = React.useState<3|5|7>(5)
+  const [viewDays, setViewDays] = React.useState<1|5|7>(7)
   const [calendarDate, setCalendarDate] = React.useState<Date>(new Date())
   const [slots, setSlots] = React.useState<ScheduleSlot[]>([])
   const [people, setPeople] = React.useState<Person[]>([])
@@ -94,14 +94,14 @@ export default function RoomsPage() {
       <DashboardShell>
         {/* Center calendar with custom header */}
         <section>
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2">
+          <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 shadow-md">
             <div className="text-sm font-medium">
               {format(calendarDate, 'MMM')} - {format(new Date(calendarDate.getFullYear(), calendarDate.getMonth()+Math.ceil(viewDays/30)), 'MMM yyyy')}
             </div>
             <div className="flex items-center gap-2">
               <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
-                {[3,5,7].map(n => (
-                  <button key={n} onClick={()=>setViewDays(n as 3|5|7)} className={`px-3 py-1.5 text-sm ${viewDays===n? 'bg-slate-100 dark:bg-slate-800' : ''}`}>{n} days</button>
+                {[1,5,7].map(n => (
+                  <button key={n} onClick={()=>setViewDays(n as 1|5|7)} className={`px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 ${viewDays===n? 'bg-slate-100 dark:bg-slate-800' : ''}`}>{n===1? 'Giorno' : `${n} giorni`}</button>
                 ))}
               </div>
               <div className="inline-flex items-center gap-2">

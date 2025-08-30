@@ -9,17 +9,18 @@ import { createRoom } from '../spec/mockApi'
 export function DashboardShell({ children }: { children: React.ReactNode }){
   const router = useRouter()
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[3rem_20rem_minmax(0,1fr)_22rem] gap-4 items-start">
-      <SidebarNav />
-      <SessionSetupCard onStart={async (d, t)=>{
-        const r = await createRoom({ name: `Sessione ${d}m`, topic: t, visibility: 'public' })
-        router.push(`/room/${r.id}`)
-      }} />
-      <section>
+    <div className="grid grid-cols-1 lg:grid-cols-[3rem_16rem_minmax(0,1fr)_16rem] gap-4 items-start px-6 md:px-12">
+      <div className="hidden lg:flex"><SidebarNav /></div>
+      <div className="hidden lg:block">
+        <SessionSetupCard onStart={async (d, t)=>{
+          const r = await createRoom({ name: `Sessione ${d}m`, topic: t, visibility: 'public' })
+          router.push(`/room/${r.id}`)
+        }} />
+      </div>
+      <section className="min-w-0">
         {children}
       </section>
-      <TodayPanel />
+      <div className="hidden lg:block"><TodayPanel /></div>
     </div>
   )
 }
-
