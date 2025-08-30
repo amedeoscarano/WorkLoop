@@ -2,37 +2,51 @@ import * as React from 'react'
 
 export type SessionTimerProps = {
   duration: 25 | 50
-  status: 'idle'|'scheduled'|'running'|'break'|'completed'|'aborted'
+  status: 'idle' | 'scheduled' | 'running' | 'break' | 'completed' | 'aborted'
   remainingMs: number
-  onStart: ()=>void
-  onAbort: ()=>void
-  onComplete: ()=>void
-  ariaLive?: 'off'|'polite'|'assertive'
+  onStart: () => void
+  onAbort: () => void
+  onComplete: () => void
+  ariaLive?: 'off' | 'polite' | 'assertive'
   canStart?: boolean
 }
 
 export function SessionTimer({
-  duration, status, remainingMs, onStart, onAbort, onComplete, ariaLive='polite', canStart=true
+  duration,
+  status,
+  remainingMs,
+  onStart,
+  onAbort,
+  onComplete,
+  ariaLive = 'polite',
+  canStart = true,
 }: SessionTimerProps) {
-
   const mins = Math.floor(remainingMs / 60000)
   const secs = Math.floor((remainingMs % 60000) / 1000)
-  const timeStr = `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`
+  const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     if (status === 'running' && remainingMs <= 0) {
       onComplete()
     }
   }, [status, remainingMs, onComplete])
 
   return (
-    <section aria-live={ariaLive} className="rounded-xl p-4 border border-slate-200 dark:border-slate-800">
+    <section
+      aria-live={ariaLive}
+      className="rounded-xl p-4 border border-slate-200 dark:border-slate-800"
+    >
       <h4 className="text-sm text-slate-500">Timer condiviso</h4>
-      <p className="mt-2 text-5xl font-bold tabular-nums text-slate-900 dark:text-slate-100" aria-label={`Tempo rimanente ${mins} minuti e ${secs} secondi`}>
+      <p
+        className="mt-2 text-5xl font-bold tabular-nums text-slate-900 dark:text-slate-100"
+        aria-label={`Tempo rimanente ${mins} minuti e ${secs} secondi`}
+      >
         {timeStr}
       </p>
-      {status==='running' && remainingMs<=10000 && (
-        <span className="sr-only" aria-live="assertive">Mancano {Math.ceil(remainingMs/1000)} secondi</span>
+      {status === 'running' && remainingMs <= 10000 && (
+        <span className="sr-only" aria-live="assertive">
+          Mancano {Math.ceil(remainingMs / 1000)} secondi
+        </span>
       )}
       <p className="mt-1 text-xs text-slate-500">Durata: {duration} min</p>
 
@@ -56,10 +70,8 @@ export function SessionTimer({
           </button>
         ) : null}
 
-        {(status === 'completed' || status === 'aborted' || status === 'break') ? (
-          <span className="text-sm text-slate-600 dark:text-slate-300">
-            Stato: {status}
-          </span>
+        {status === 'completed' || status === 'aborted' || status === 'break' ? (
+          <span className="text-sm text-slate-600 dark:text-slate-300">Stato: {status}</span>
         ) : null}
       </div>
     </section>

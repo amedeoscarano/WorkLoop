@@ -1,5 +1,5 @@
-export type Visibility = 'public'|'private'
-export type SessionStatus = 'idle'|'scheduled'|'running'|'break'|'completed'|'aborted'
+export type Visibility = 'public' | 'private'
+export type SessionStatus = 'idle' | 'scheduled' | 'running' | 'break' | 'completed' | 'aborted'
 
 export type Room = {
   id: string
@@ -30,4 +30,3 @@ export type ChatMessage = {
   text: string
   ts: string
 }
-

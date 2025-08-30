@@ -2,8 +2,8 @@ import * as React from 'react'
 
 export type ChatPanelProps = {
   roomId: string
-  messages: {id:string; user:{id:string;name:string}; text:string; ts:string}[]
-  onSend: (text:string)=>Promise<void>
+  messages: { id: string; user: { id: string; name: string }; text: string; ts: string }[]
+  onSend: (text: string) => Promise<void>
   disabled?: boolean
   title?: string
 }
@@ -23,15 +23,19 @@ export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPan
     <section className="rounded-xl border border-slate-200 dark:border-slate-800 p-4 h-full flex flex-col">
       <h4 className="text-sm text-slate-500">{title ?? 'Chat stanza'}</h4>
       <ul className="mt-3 flex-1 overflow-auto space-y-2" aria-live="polite">
-        {messages.map(m => (
+        {messages.map((m) => (
           <li key={m.id} className="text-sm">
             <span className="font-medium text-slate-800 dark:text-slate-100">{m.user.name}:</span>{' '}
             <span className="text-slate-700 dark:text-slate-200">{m.text}</span>
-            <time className="ml-2 text-xs text-slate-400">{new Date(m.ts).toLocaleTimeString()}</time>
+            <time className="ml-2 text-xs text-slate-400">
+              {new Date(m.ts).toLocaleTimeString()}
+            </time>
           </li>
         ))}
         {messages.length === 0 && (
-          <li className="text-sm text-slate-500">Nessun messaggio. Rompi il ghiaccio con un saluto 👋</li>
+          <li className="text-sm text-slate-500">
+            Nessun messaggio. Rompi il ghiaccio con un saluto 👋
+          </li>
         )}
       </ul>
 
@@ -41,7 +45,7 @@ export function ChatPanel({ roomId, messages, onSend, disabled, title }: ChatPan
           className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
           placeholder="Scrivi un messaggio…"
           value={text}
-          onChange={e=>setText(e.target.value)}
+          onChange={(e) => setText(e.target.value)}
           disabled={disabled}
           aria-label="Scrivi un messaggio"
         />

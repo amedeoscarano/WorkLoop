@@ -26,28 +26,40 @@ export default function RoomPage() {
   const [roomName, setRoomName] = React.useState<string>('')
   const [roomObj, setRoomObj] = React.useState<any | null>(null)
   const [goal, setGoal] = React.useState('')
-  const [duration, setDuration] = React.useState<25|50>(25)
+  const [duration, setDuration] = React.useState<25 | 50>(25)
   const [status, setStatus] = React.useState<SessionStatus>('idle')
-  const [remainingMs, setRemainingMs] = React.useState(25*60_000)
+  const [remainingMs, setRemainingMs] = React.useState(25 * 60_000)
   const [messages, setMessages] = React.useState<any[]>([])
-  const [error, setError] = React.useState<string|null>(null)
+  const [error, setError] = React.useState<string | null>(null)
   const [summaryOpen, setSummaryOpen] = React.useState(false)
   const [scheduleOpen, setScheduleOpen] = React.useState(false)
 
   React.useEffect(() => {
     let on = true
     getRoom(roomId)
-      .then(r => { if(on){ setRoomName(r.name); setRoomObj(r as any); setError(null) } })
-      .catch(e=>{ if(on) setError('La stanza non esiste o è privata.') })
-    return () => { on = false }
+      .then((r) => {
+        if (on) {
+          setRoomName(r.name)
+          setRoomObj(r as any)
+          setError(null)
+        }
+      })
+      .catch((e) => {
+        if (on) setError('La stanza non esiste o è privata.')
+      })
+    return () => {
+      on = false
+    }
   }, [roomId])
 
   // Presence: mark busy when session running
-  React.useEffect(()=>{
-    if (data?.user?.email) startPresence({ id: data.user.email, name: data.user.name || data.user.email })
+  React.useEffect(() => {
+    if (data?.user?.email)
+      startPresence({ id: data.user.email, name: data.user.name || data.user.email })
   }, [data])
-  React.useEffect(()=>{
-    if (status === 'running') setPresenceStatus('busy', { type:'room', id: roomId, label: roomName || 'Room' })
+  React.useEffect(() => {
+    if (status === 'running')
+      setPresenceStatus('busy', { type: 'room', id: roomId, label: roomName || 'Room' })
     else setPresenceStatus('available')
   }, [status, roomId, roomName])
 
@@ -65,27 +77,32 @@ export default function RoomPage() {
   }, [status])
 
   function resetTimer() {
-    setRemainingMs(duration*60_000)
+    setRemainingMs(duration * 60_000)
   }
 
-  async function handleStart(){
-    if(!goal.trim()){ alert('Scrivi un goal, anche breve.'); return }
-    try{
+  async function handleStart() {
+    if (!goal.trim()) {
+      alert('Scrivi un goal, anche breve.')
+      return
+    }
+    try {
       await startSession({ roomId, goal, duration })
       setStatus('running')
       resetTimer()
       capture('session_started', { room_id: roomId, duration })
-    }catch(e:any){ alert(e?.message || 'Errore.') }
+    } catch (e: any) {
+      alert(e?.message || 'Errore.')
+    }
   }
 
-  async function handleAbort(){
+  async function handleAbort() {
     setStatus('aborted')
     await endSession('current', false)
     capture('session_aborted', { room_id: roomId })
   }
 
-  async function handleComplete(){
-    if(status !== 'running') return
+  async function handleComplete() {
+    if (status !== 'running') return
     setStatus('completed')
     await endSession('current', true)
     // Open session summary modal instead of a disruptive alert
@@ -93,84 +110,119 @@ export default function RoomPage() {
     capture('session_completed', { room_id: roomId, duration, goal_completed: true })
   }
 
-  async function handleSend(text:string){
+  async function handleSend(text: string) {
     const m = await sendMessage(roomId, text)
-    setMessages((prev)=>[...prev, m])
+    setMessages((prev) => [...prev, m])
   }
 
   // Paywall: gate private/video rooms for unsubscribed users
   const gated = !!(roomObj && requiresSubscription(roomObj) && !isUserSubscribed())
   React.useEffect(() => {
     if (gated && roomObj) {
-      capture('paywall_viewed', { reason: roomObj.visibility === 'private' ? 'private-room' : 'video-room' })
+      capture('paywall_viewed', {
+        reason: roomObj.visibility === 'private' ? 'private-room' : 'video-room',
+      })
     }
   }, [gated, roomObj])
   if (gated) {
-    return <PaywallGate onUpgrade={() => { checkout('pro-monthly','paywall') }} />
+    return (
+      <PaywallGate
+        onUpgrade={() => {
+          checkout('pro-monthly', 'paywall')
+        }}
+      />
+    )
   }
 
   return (
     <AuthGuard>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="main">
-      <div>
-        <h2 className="text-xl font-semibold">{roomName || 'Stanza'}</h2>
-        <div className="mt-2 flex gap-2">
-          <button className="px-3 py-1.5 rounded border" onClick={()=>setScheduleOpen(true)}>Programma</button>
-        </div>
-        {/* Presence and reactions at top */}
-        {roomId && (
-          <div className="mt-2">
-            <PresenceBar roomId={roomId} />
-            <div className="mt-2">
-              <a href="/inbox" className="text-xs underline">Inbox</a>
-            </div>
-            <ReactionBar roomId={roomId} />
-          </div>
-        )}
-        {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-
-        <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-          <label className="block text-sm text-slate-600">Goal per questa sessione</label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6" role="main">
+        <div>
+          <h2 className="text-xl font-semibold">{roomName || 'Stanza'}</h2>
           <div className="mt-2 flex gap-2">
-            <input value={goal} onChange={(e)=>setGoal(e.target.value)} placeholder="Scrivi un goal per iniziare" className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900" />
-            <select value={duration} onChange={(e)=>setDuration(Number(e.target.value) as 25|50)} className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-            </select>
+            <button className="px-3 py-1.5 rounded border" onClick={() => setScheduleOpen(true)}>
+              Programma
+            </button>
           </div>
+          {/* Presence and reactions at top */}
+          {roomId && (
+            <div className="mt-2">
+              <PresenceBar roomId={roomId} />
+              <div className="mt-2">
+                <a href="/inbox" className="text-xs underline">
+                  Inbox
+                </a>
+              </div>
+              <ReactionBar roomId={roomId} />
+            </div>
+          )}
+          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+
+          <div className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+            <label className="block text-sm text-slate-600">Goal per questa sessione</label>
+            <div className="mt-2 flex gap-2">
+              <input
+                value={goal}
+                onChange={(e) => setGoal(e.target.value)}
+                placeholder="Scrivi un goal per iniziare"
+                className="flex-1 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+              />
+              <select
+                value={duration}
+                onChange={(e) => setDuration(Number(e.target.value) as 25 | 50)}
+                className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <SessionTimer
+              duration={duration}
+              status={status}
+              remainingMs={remainingMs}
+              onStart={handleStart}
+              onAbort={handleAbort}
+              onComplete={handleComplete}
+              ariaLive={remainingMs <= 10_000 ? 'assertive' : 'polite'}
+              canStart={!!goal.trim()}
+            />
+          </div>
+
+          {getFlag('videoEnabled') ? (
+            <VideoPanel roomId={roomId} identity={data?.user?.email || 'anon'} />
+          ) : (
+            <section className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
+              <p className="text-sm text-slate-600">Video in arrivo</p>
+              <button
+                className="mt-2 px-3 py-1.5 rounded border"
+                onClick={() => window.open('https://meet.google.com/new', '_blank')}
+              >
+                Apri Google Meet (backup)
+              </button>
+            </section>
+          )}
+
+          <div className="mt-2 text-xs text-slate-500">Scrivi un goal per avviare.</div>
         </div>
 
-        <div className="mt-4">
-          <SessionTimer
-            duration={duration}
-            status={status}
-            remainingMs={remainingMs}
-            onStart={handleStart}
-            onAbort={handleAbort}
-            onComplete={handleComplete}
-            ariaLive={remainingMs <= 10_000 ? 'assertive' : 'polite'}
-            canStart={!!goal.trim()}
-          />
+        <div className="flex flex-col h-[70vh]">
+          <ChatPanel roomId={roomId} messages={messages} onSend={handleSend} />
         </div>
-
-        {getFlag('videoEnabled') ? (
-          <VideoPanel roomId={roomId} identity={data?.user?.email || 'anon'} />
-        ) : (
-          <section className="mt-4 rounded-xl border border-slate-200 dark:border-slate-800 p-4">
-            <p className="text-sm text-slate-600">Video in arrivo</p>
-            <button className="mt-2 px-3 py-1.5 rounded border" onClick={()=>window.open('https://meet.google.com/new','_blank')}>Apri Google Meet (backup)</button>
-          </section>
-        )}
-
-        <div className="mt-2 text-xs text-slate-500">Scrivi un goal per avviare.</div>
+        <SessionSummaryModal
+          open={summaryOpen}
+          onClose={() => setSummaryOpen(false)}
+          goal={goal}
+          duration={duration}
+        />
+        <ScheduleModal
+          open={scheduleOpen}
+          onClose={() => setScheduleOpen(false)}
+          defaults={{ title: goal || `Sessione ${duration}m`, duration }}
+        />
       </div>
-
-      <div className="flex flex-col h-[70vh]">
-        <ChatPanel roomId={roomId} messages={messages} onSend={handleSend} />
-      </div>
-      <SessionSummaryModal open={summaryOpen} onClose={()=>setSummaryOpen(false)} goal={goal} duration={duration} />
-      <ScheduleModal open={scheduleOpen} onClose={()=>setScheduleOpen(false)} defaults={{ title: goal || `Sessione ${duration}m`, duration }} />
-    </div>
     </AuthGuard>
   )
 }

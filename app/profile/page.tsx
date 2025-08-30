@@ -1,9 +1,11 @@
 'use client'
 import { DashboardShell } from '../../ui/DashboardShell'
 
-export default function ProfilePage(){
-  function signOut(){
-    try { localStorage.removeItem('user') } catch {}
+export default function ProfilePage() {
+  function signOut() {
+    try {
+      localStorage.removeItem('user')
+    } catch {}
     document.cookie = 'linkedin_connected=; Max-Age=0; path=/'
     document.cookie = 'google_connected=; Max-Age=0; path=/'
     window.location.href = '/login'
@@ -19,7 +21,9 @@ export default function ProfilePage(){
               <p className="text-xs text-slate-500">Member since: Aug 29th, 2025</p>
             </div>
           </div>
-          <button className="px-3 py-1.5 rounded border" onClick={signOut}>Sign out</button>
+          <button className="px-3 py-1.5 rounded border" onClick={signOut}>
+            Sign out
+          </button>
         </div>
 
         <div className="mt-4 grid gap-3">
@@ -35,8 +39,10 @@ export default function ProfilePage(){
           <div className="rounded-xl border border-slate-200 dark:border-slate-800 p-3">
             <p className="text-sm font-medium">My Tags</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              {['Startup','Small Business','Neurodivergent','Technology','Design'].map(t=> (
-                <span key={t} className="px-2 py-1 rounded-lg bg-slate-100 text-xs">{t}</span>
+              {['Startup', 'Small Business', 'Neurodivergent', 'Technology', 'Design'].map((t) => (
+                <span key={t} className="px-2 py-1 rounded-lg bg-slate-100 text-xs">
+                  {t}
+                </span>
               ))}
             </div>
           </div>
@@ -58,7 +64,7 @@ export default function ProfilePage(){
   )
 }
 
-function Stat({ label, value }: { label:string; value:string }){
+function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border border-slate-200 dark:border-slate-800 p-3">
       <div className="text-xl font-semibold">{value}</div>

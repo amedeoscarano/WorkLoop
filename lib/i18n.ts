@@ -22,5 +22,6 @@ const it: Dict = {
   'billing.benefit.support': 'Supporto prioritario',
 }
 
-export function t(key: keyof typeof it): string { return it[key] || key }
-
+export function t(key: keyof typeof it): string {
+  return it[key] || key
+}

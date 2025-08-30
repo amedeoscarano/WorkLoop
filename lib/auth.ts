@@ -12,22 +12,22 @@ export const authOptions: NextAuthOptions = {
           scope: 'openid email profile https://www.googleapis.com/auth/calendar.events',
           prompt: 'consent',
           access_type: 'offline',
-          include_granted_scopes: 'true'
-        }
-      }
+          include_granted_scopes: 'true',
+        },
+      },
     }),
     Credentials({
       name: 'Email',
       credentials: {
         email: { label: 'Email', type: 'email' },
-        name: { label: 'Name', type: 'text' }
+        name: { label: 'Name', type: 'text' },
       },
       async authorize(creds) {
         const email = (creds?.email || '').toString().trim()
         if (!email) return null
         return { id: email, email, name: (creds?.name as string) || email.split('@')[0] }
-      }
-    })
+      },
+    }),
   ],
   session: { strategy: 'jwt' },
   callbacks: {
@@ -47,11 +47,10 @@ export const authOptions: NextAuthOptions = {
       ;(session as any).refresh_token = token.refresh_token
       ;(session as any).expires_at = token.expires_at
       return session
-    }
+    },
   },
   pages: { signIn: '/login' },
-  secret: process.env.NEXTAUTH_SECRET || 'dev_secret_change_me'
+  secret: process.env.NEXTAUTH_SECRET || 'dev_secret_change_me',
 }
 
 export const getSession = () => getServerSession(authOptions)
-

@@ -8,31 +8,37 @@ import { AuthGuard } from '../../ui/AuthGuard'
 import { useSession } from 'next-auth/react'
 import { startPresence, setStatus } from '../../lib/presence'
 
-export default function InboxPage(){
+export default function InboxPage() {
   const { data } = useSession()
-  const conversations = React.useMemo(()=>[
-    { id: 'dm_u1', name: 'Alex', last: 'A dopo!', ts: new Date().toISOString(), unread: 0 },
-    { id: 'dm_u2', name: 'Bianca', last: 'Ok', ts: new Date().toISOString(), unread: 2 }
-  ], [])
-  React.useEffect(()=>{
-    if (data?.user?.email) startPresence({ id: data.user.email, name: data.user.name || data.user.email })
+  const conversations = React.useMemo(
+    () => [
+      { id: 'dm_u1', name: 'Alex', last: 'A dopo!', ts: new Date().toISOString(), unread: 0 },
+      { id: 'dm_u2', name: 'Bianca', last: 'Ok', ts: new Date().toISOString(), unread: 2 },
+    ],
+    []
+  )
+  React.useEffect(() => {
+    if (data?.user?.email)
+      startPresence({ id: data.user.email, name: data.user.name || data.user.email })
     setStatus('available', null)
-    try{ localStorage.setItem('wl_unread','0') }catch{}
+    try {
+      localStorage.setItem('wl_unread', '0')
+    } catch {}
   }, [data])
   return (
     <AuthGuard>
-    <DashboardShell>
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <h3 className="text-sm font-medium mb-2">Conversations</h3>
-          <ConversationList items={conversations} />
+      <DashboardShell>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="text-sm font-medium mb-2">Conversations</h3>
+            <ConversationList items={conversations} />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium mb-2">People</h3>
+            <PeopleList />
+          </div>
         </div>
-        <div>
-          <h3 className="text-sm font-medium mb-2">People</h3>
-          <PeopleList />
-        </div>
-      </div>
-    </DashboardShell>
+      </DashboardShell>
     </AuthGuard>
   )
 }

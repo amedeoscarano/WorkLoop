@@ -17,7 +17,7 @@ import { listOnlinePeople, type Person } from '../../spec/people'
 import { DashboardShell } from '../../ui/DashboardShell'
 import { AuthGuard } from '../../ui/AuthGuard'
 
-type Filter = 'all'|'public'|'private'
+type Filter = 'all' | 'public' | 'private'
 
 export default function RoomsPage() {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function RoomsPage() {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
   const [filter, setFilter] = React.useState<Filter>('all')
-  const [viewDays, setViewDays] = React.useState<1|5|7>(7)
+  const [viewDays, setViewDays] = React.useState<1 | 5 | 7>(7)
   const [calendarDate, setCalendarDate] = React.useState<Date>(new Date())
   const [slots, setSlots] = React.useState<ScheduleSlot[]>([])
   const [people, setPeople] = React.useState<Person[]>([])
@@ -34,8 +34,22 @@ export default function RoomsPage() {
   React.useEffect(() => {
     let on = true
     setLoading(true)
-    listRooms().then(r => { if(on){ setRooms(r); setError(null) } }).catch(e=>{ if(on) setError('Impossibile caricare le stanze.') }).finally(()=>{ if(on) setLoading(false) })
-    return () => { on = false }
+    listRooms()
+      .then((r) => {
+        if (on) {
+          setRooms(r)
+          setError(null)
+        }
+      })
+      .catch((e) => {
+        if (on) setError('Impossibile caricare le stanze.')
+      })
+      .finally(() => {
+        if (on) setLoading(false)
+      })
+    return () => {
+      on = false
+    }
   }, [])
 
   React.useEffect(() => {
@@ -44,15 +58,21 @@ export default function RoomsPage() {
     }
   }, [loading, error, rooms.length])
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     let on = true
-    listScheduleSlots().then(s=>{ if(on) setSlots(s) })
-    listOnlinePeople().then(p=>{ if(on) setPeople(p) })
-    return ()=>{ on = false }
+    listScheduleSlots().then((s) => {
+      if (on) setSlots(s)
+    })
+    listOnlinePeople().then((p) => {
+      if (on) setPeople(p)
+    })
+    return () => {
+      on = false
+    }
   }, [])
 
   const showPrivate = getFlag('privateRooms')
-  const filtered = rooms.filter(r => {
+  const filtered = rooms.filter((r) => {
     if (!showPrivate && r.visibility === 'private') return false
     if (filter === 'public') return r.visibility === 'public'
     if (filter === 'private') return r.visibility === 'private'
@@ -60,95 +80,181 @@ export default function RoomsPage() {
   })
 
   const [unread, setUnread] = React.useState(0)
-  React.useEffect(()=>{
-    function update(){ try{ setUnread(Number(localStorage.getItem('wl_unread')||'0')) }catch{}}
+  React.useEffect(() => {
+    function update() {
+      try {
+        setUnread(Number(localStorage.getItem('wl_unread') || '0'))
+      } catch {}
+    }
     update()
-    const onStorage = (e: StorageEvent) => { if (e.key === 'wl_unread') update() }
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'wl_unread') update()
+    }
     window.addEventListener('storage', onStorage)
     const id = setInterval(update, 2000)
-    return ()=>{ window.removeEventListener('storage', onStorage); clearInterval(id) }
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      clearInterval(id)
+    }
   }, [])
 
   return (
     <AuthGuard>
-    <section>
-      <div className="mb-4 flex items-center gap-3">
-        <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
-          {(['all','public','private'] as Filter[]).map(f => (
-            <button key={f} onClick={()=>setFilter(f)} className={`px-3 py-1.5 text-sm ${filter===f? 'bg-slate-100 dark:bg-slate-800' : ''}`}>{f}</button>
-          ))}
+      <section>
+        <div className="mb-4 flex items-center gap-3">
+          <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+            {(['all', 'public', 'private'] as Filter[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 text-sm ${filter === f ? 'bg-slate-100 dark:bg-slate-800' : ''}`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+          <button
+            className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
+            onClick={async () => {
+              const id = await findNextActiveRoom()
+              if (!id) return alert('Nessuna stanza attiva ora')
+              router.push(`/room/${id}`)
+            }}
+          >
+            Entra nella prossima stanza attiva
+          </button>
+          <a
+            className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border"
+            href="/inbox"
+          >
+            Inbox
+            {unread > 0 && (
+              <span className="ml-1 inline-block px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">
+                {unread}
+              </span>
+            )}
+          </a>
         </div>
-        <button
-          className="ml-auto inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500"
-          onClick={async ()=>{
-            const id = await findNextActiveRoom()
-            if (!id) return alert('Nessuna stanza attiva ora')
-            router.push(`/room/${id}`)
-          }}
-        >
-          Entra nella prossima stanza attiva
-        </button>
-        <a className="ml-2 inline-flex items-center gap-2 px-3 py-2 rounded-lg border" href="/inbox">Inbox{unread>0 && <span className="ml-1 inline-block px-2 py-0.5 rounded-full bg-blue-600 text-white text-xs">{unread}</span>}</a>
-      </div>
 
-      <DashboardShell>
-        {/* Center calendar with custom header */}
-        <section>
-          <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 shadow-md">
-            <div className="text-sm font-medium">
-              {format(calendarDate, 'MMM')} - {format(new Date(calendarDate.getFullYear(), calendarDate.getMonth()+Math.ceil(viewDays/30)), 'MMM yyyy')}
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
-                {[1,5,7].map(n => (
-                  <button key={n} onClick={()=>setViewDays(n as 1|5|7)} className={`px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 ${viewDays===n? 'bg-slate-100 dark:bg-slate-800' : ''}`}>{n===1? 'Giorno' : `${n} giorni`}</button>
-                ))}
+        <DashboardShell>
+          {/* Center calendar with custom header */}
+          <section>
+            <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2 shadow-md">
+              <div className="text-sm font-medium">
+                {format(calendarDate, 'MMM')} -{' '}
+                {format(
+                  new Date(
+                    calendarDate.getFullYear(),
+                    calendarDate.getMonth() + Math.ceil(viewDays / 30)
+                  ),
+                  'MMM yyyy'
+                )}
               </div>
-              <div className="inline-flex items-center gap-2">
-                <button className="px-2 py-1 rounded border" onClick={()=>setCalendarDate(new Date(calendarDate.getTime()-24*60*60*1000*viewDays))}>{'<'}</button>
-                <button className="px-2 py-1 rounded border" onClick={()=>setCalendarDate(new Date())}>Today</button>
-                <button className="px-2 py-1 rounded border" onClick={()=>setCalendarDate(new Date(calendarDate.getTime()+24*60*60*1000*viewDays))}>{'>'}</button>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+                  {[1, 5, 7].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => setViewDays(n as 1 | 5 | 7)}
+                      className={`px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 ${viewDays === n ? 'bg-slate-100 dark:bg-slate-800' : ''}`}
+                    >
+                      {n === 1 ? 'Giorno' : `${n} giorni`}
+                    </button>
+                  ))}
+                </div>
+                <div className="inline-flex items-center gap-2">
+                  <button
+                    className="px-2 py-1 rounded border"
+                    onClick={() =>
+                      setCalendarDate(
+                        new Date(calendarDate.getTime() - 24 * 60 * 60 * 1000 * viewDays)
+                      )
+                    }
+                  >
+                    {'<'}
+                  </button>
+                  <button
+                    className="px-2 py-1 rounded border"
+                    onClick={() => setCalendarDate(new Date())}
+                  >
+                    Today
+                  </button>
+                  <button
+                    className="px-2 py-1 rounded border"
+                    onClick={() =>
+                      setCalendarDate(
+                        new Date(calendarDate.getTime() + 24 * 60 * 60 * 1000 * viewDays)
+                      )
+                    }
+                  >
+                    {'>'}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="mt-2 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
-            <Calendar
-              localizer={localizer}
-              date={calendarDate}
-              onNavigate={d=>setCalendarDate(d)}
-              view="day"
-              length={viewDays}
-              events={slots}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: 620 }}
-              eventPropGetter={(event)=>{
-                const bg = (event as ScheduleSlot).status === 'scheduled' ? '#22c55e' : '#f59e0b'
-                return { style: { backgroundColor: bg, borderColor: bg } }
-              }}
-              toolbar={false as any}
-            />
-          </div>
-        </section>
-      </DashboardShell>
-    </section>
+            <div className="mt-2 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+              <Calendar
+                localizer={localizer}
+                date={calendarDate}
+                onNavigate={(d) => setCalendarDate(d)}
+                view="day"
+                length={viewDays}
+                events={slots}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: 620 }}
+                eventPropGetter={(event) => {
+                  const bg = (event as ScheduleSlot).status === 'scheduled' ? '#22c55e' : '#f59e0b'
+                  return { style: { backgroundColor: bg, borderColor: bg } }
+                }}
+                toolbar={false as any}
+              />
+            </div>
+          </section>
+        </DashboardShell>
+      </section>
     </AuthGuard>
   )
 }
 
 // Date-fns localizer for react-big-calendar
 const locales = {}
-const localizer = dateFnsLocalizer({ format, parse, startOfWeek: () => startOfWeek(new Date()), getDay, locales })
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek: () => startOfWeek(new Date()),
+  getDay,
+  locales,
+})
 
 // Stub form for creating rooms with durations and reasons
-function CreateRoomForm({ onCreate }: { onCreate: (input: { duration: 15|25|50; reason: 'pausa'|'sessione lavorativa congiunta' })=>void }){
-  const [duration, setDuration] = React.useState<15|25|50>(25)
-  const [reason, setReason] = React.useState<'pausa'|'sessione lavorativa congiunta'>('sessione lavorativa congiunta')
+function CreateRoomForm({
+  onCreate,
+}: {
+  onCreate: (input: {
+    duration: 15 | 25 | 50
+    reason: 'pausa' | 'sessione lavorativa congiunta'
+  }) => void
+}) {
+  const [duration, setDuration] = React.useState<15 | 25 | 50>(25)
+  const [reason, setReason] = React.useState<'pausa' | 'sessione lavorativa congiunta'>(
+    'sessione lavorativa congiunta'
+  )
   return (
-    <form className="mt-3 space-y-3" onSubmit={e=>{ e.preventDefault(); onCreate({ duration, reason }) }}>
+    <form
+      className="mt-3 space-y-3"
+      onSubmit={(e) => {
+        e.preventDefault()
+        onCreate({ duration, reason })
+      }}
+    >
       <div>
         <label className="block text-sm">Durata</label>
-        <select value={duration} onChange={e=>setDuration(Number(e.target.value) as 15|25|50)} className="mt-1 w-full rounded border px-3 py-2">
+        <select
+          value={duration}
+          onChange={(e) => setDuration(Number(e.target.value) as 15 | 25 | 50)}
+          className="mt-1 w-full rounded border px-3 py-2"
+        >
           <option value={15}>15 minuti</option>
           <option value={25}>25 minuti</option>
           <option value={50}>50 minuti</option>
@@ -157,11 +263,31 @@ function CreateRoomForm({ onCreate }: { onCreate: (input: { duration: 15|25|50; 
       <div>
         <label className="block text-sm">Motivo</label>
         <div className="mt-1 space-y-1">
-          <label className="inline-flex items-center gap-2 text-sm"><input type="radio" name="reason" value="sessione" checked={reason==='sessione lavorativa congiunta'} onChange={()=>setReason('sessione lavorativa congiunta')} /> Sessione lavorativa congiunta</label>
-          <label className="inline-flex items-center gap-2 text-sm"><input type="radio" name="reason" value="pausa" checked={reason==='pausa'} onChange={()=>setReason('pausa')} /> Pausa</label>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="reason"
+              value="sessione"
+              checked={reason === 'sessione lavorativa congiunta'}
+              onChange={() => setReason('sessione lavorativa congiunta')}
+            />{' '}
+            Sessione lavorativa congiunta
+          </label>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="reason"
+              value="pausa"
+              checked={reason === 'pausa'}
+              onChange={() => setReason('pausa')}
+            />{' '}
+            Pausa
+          </label>
         </div>
       </div>
-      <button type="submit" className="px-3 py-2 rounded bg-blue-600 text-white">Crea</button>
+      <button type="submit" className="px-3 py-2 rounded bg-blue-600 text-white">
+        Crea
+      </button>
     </form>
   )
 }

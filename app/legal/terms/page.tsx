@@ -1,4 +1,4 @@
-export default function TermsPage(){
+export default function TermsPage() {
   return (
     <section className="prose prose-slate dark:prose-invert max-w-3xl">
       <h1>Termini</h1>
@@ -6,4 +6,3 @@ export default function TermsPage(){
     </section>
   )
 }
-

@@ -10,4 +10,3 @@ Informazione Architetturale (IA) – Workloop MVP
 - Legal `/legal/*` – privacy, termini
 
 Fallbacks: skeleton, empty, error, offline banner. Paywall su private/video.
-

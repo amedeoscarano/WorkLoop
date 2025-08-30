@@ -13,9 +13,15 @@ export function openOAuthPopup(url: string, features = 'width=600,height=700'): 
     const onMessage = (ev: MessageEvent) => {
       // Accept any origin for demo purposes; lock this down in production
       const data: any = ev.data
-      if (data && data.type === 'oauth' && (data.provider === 'google' || data.provider === 'linkedin')) {
+      if (
+        data &&
+        data.type === 'oauth' &&
+        (data.provider === 'google' || data.provider === 'linkedin')
+      ) {
         window.removeEventListener('message', onMessage)
-        try { popup.close() } catch {}
+        try {
+          popup.close()
+        } catch {}
         resolve()
       }
     }

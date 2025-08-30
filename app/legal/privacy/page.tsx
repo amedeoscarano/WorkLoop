@@ -1,4 +1,4 @@
-export default function PrivacyPage(){
+export default function PrivacyPage() {
   return (
     <section className="prose prose-slate dark:prose-invert max-w-3xl">
       <h1>Privacy</h1>
@@ -6,4 +6,3 @@ export default function PrivacyPage(){
     </section>
   )
 }
-

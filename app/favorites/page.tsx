@@ -1,7 +1,7 @@
 'use client'
 import { DashboardShell } from '../../ui/DashboardShell'
 
-export default function FavoritesSchedulePage(){
+export default function FavoritesSchedulePage() {
   return (
     <DashboardShell>
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4">
@@ -13,4 +13,3 @@ export default function FavoritesSchedulePage(){
     </DashboardShell>
   )
 }
-

@@ -1,6 +1,7 @@
 Componenti principali (props)
 
 RoomCard
+
 ```
 type RoomCardProps = {
   id: string; name: string; topic?: string;
@@ -10,6 +11,7 @@ type RoomCardProps = {
 ```
 
 SessionTimer
+
 ```
 type SessionTimerProps = {
   duration: 25|50; status: 'idle'|'scheduled'|'running'|'break'|'completed'|'aborted';
@@ -18,6 +20,7 @@ type SessionTimerProps = {
 ```
 
 ChatPanel
+
 ```
 type ChatPanelProps = {
   roomId: string; messages: {id:string; user:{id:string;name:string}; text:string; ts:string}[];
@@ -26,4 +29,3 @@ type ChatPanelProps = {
 ```
 
 Altri (stub): PresenceBar, ReactionBar, StreakWidget, PaywallNotice.
-

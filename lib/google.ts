@@ -13,12 +13,11 @@ export async function googleFetch(path: string, init?: RequestInit) {
   const res = await fetch(`https://www.googleapis.com${path}`, {
     ...(init || {}),
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
-      ...(init?.headers || {})
-    }
+      ...(init?.headers || {}),
+    },
   })
   if (!res.ok) throw new Error(`GOOGLE_API_ERROR ${res.status}`)
   return res.json()
 }
-

@@ -4,9 +4,11 @@ export function isUserSubscribed(): boolean {
   return (process.env.NEXT_PUBLIC_USER_SUBSCRIBED || 'false') === 'true'
 }
 
-export function requiresSubscription(room: { visibility: 'public'|'private'; hasVideo?: boolean }): boolean {
+export function requiresSubscription(room: {
+  visibility: 'public' | 'private'
+  hasVideo?: boolean
+}): boolean {
   const privateRoom = room.visibility === 'private'
   const videoFeature = room.hasVideo === true
   return privateRoom || videoFeature
 }
-
